@@ -1,6 +1,4 @@
 import cv2
-import win32con
-import win32gui
 
 from PyQt5.QtCore import QThread
 
@@ -10,4 +8,7 @@ class myOpenCV(QThread):
 
     def run(self):
         pass
+
+
+
 

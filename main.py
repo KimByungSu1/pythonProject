@@ -1,8 +1,9 @@
-import sys
+import sys, pyautogui
 from PyQt5.QtWidgets import *
 
 from UI.test import *              #   Qt디자이너로 만든 UI
 from MODULE.mySerial import *      #   user Serial
+from MODULE.myWin32API import *    #   user Win32 API
 from MODULE.myOpenCV import *      #   user OpenCV
 
 class MainWindow(QMainWindow):
@@ -12,6 +13,16 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)  # Qt디자이너로 생성된 UI
         self.show()
         self.mySerial = mySerial()  #   시리얼포트 객체 생성
+        self.myWin32API = myWin32API()
+
+        for win in self.myWin32API.getWindowList():
+           if (win[0] == 'Gersang'):
+                print(self.myWin32API.getWindowRect(win[1]))
+
+        button5location = pyautogui.locateOnScreen('./TARGET_IMAGE/COMMON/asd.png')  # 이미지가 있는 위치를 가져옵니다.
+        center = pyautogui.center(button5location)
+        pyautogui.moveTo(center)
+
 
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.comboBox.addItem(val)
