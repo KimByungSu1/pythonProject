@@ -25,9 +25,9 @@ class MainWindow(QMainWindow):
         btnName = btn.objectName()
 
         if btnName == "pushButton_2":
-            if self.mySerial.serialOpen(self.ui.comboBox.currentText()) == True:
-                self.mySerial.start()
-
+            if self.mySerial.serialOpen(self.ui.comboBox.currentText()) == True:    #   시리얼 오픈
+                self.mySerial.start()   #   쓰레드 시작
+            self.ui.pushButton_2.setText({False: 'Connect', True: 'Disconnect'}[self.mySerial.isOpen])  # Port 상태에 따라 Connect ↔ Disconnect 버튼 글자 바꾸기
 
 
 

@@ -20,14 +20,14 @@ class mySerial(QThread):
 
             if buf:  # 수신 Data 존재시
                 print(nowTime)
-            print(nowTime)
-        pass
+        print('serial Thread Stop!!')
+
 
     def availablePorts(self):
-        retPorts = []
+        returnAvailablePorts = []
         for port in ports:
-            retPorts.append(port.device)
-        return retPorts
+            returnAvailablePorts.append(port.device)
+        return returnAvailablePorts
 
     def serialOpen(self, COMPORT):
         try:
@@ -39,9 +39,10 @@ class mySerial(QThread):
                 self.isOpen = True
                 print('Serial Open')
             else:
-                self.mySerial.close()  # 포트 닫기
                 self.isOpen = False
                 print('Serial Close')
+                self.mySerial.close()  # 포트 닫기
+
 
         except serial.SerialException as e:
             self.isOpen = False
