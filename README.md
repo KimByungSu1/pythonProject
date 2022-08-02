@@ -1,5 +1,5 @@
 # pythonProject
-pip install pyqt5
+pip install pyqt5<br>
 pip install pyautogui
 pip install pywin32
 pip install pyserial
