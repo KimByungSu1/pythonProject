@@ -22,7 +22,6 @@ class mySerial(QThread):
                 print(nowTime)
         print('serial Thread Stop!!')
 
-
     def availablePorts(self):
         returnAvailablePorts = []
         for port in ports:
@@ -49,4 +48,3 @@ class mySerial(QThread):
             print(e)
 
         return self.isOpen
-

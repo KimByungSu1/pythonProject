@@ -1,9 +1,9 @@
-import sys, serial, cv2
+import sys
 from PyQt5.QtWidgets import *
 
 from UI.test import *              #   Qt디자이너로 만든 UI
-from MODULE.mySerial import *      #   사용자 Module
-
+from MODULE.mySerial import *      #   user Serial
+from MODULE.myOpenCV import *      #   user OpenCV
 
 class MainWindow(QMainWindow):
     def __init__(self):
