@@ -1,4 +1,5 @@
 import sys, pyautogui
+import numpy as np
 from PyQt5.QtWidgets import *
 
 from UI.test import *              #   Qt디자이너로 만든 UI
@@ -19,9 +20,12 @@ class MainWindow(QMainWindow):
            if (win[0] == 'Gersang'):
                 print(self.myWin32API.getWindowRect(win[1]))
 
-        button5location = pyautogui.locateOnScreen('./TARGET_IMAGE/COMMON/asd.png')  # 이미지가 있는 위치를 가져옵니다.
-        center = pyautogui.center(button5location)
-        pyautogui.moveTo(center)
+        ff = np.fromfile('./TARGET_IMAGE/COMMON/삼색.png', np.uint8)
+        img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
+
+        x, y = pyautogui.locateCenterOnScreen(img, confidence=0.7)  # 이미지가 있는 위치를 가져옵니다.
+        pyautogui.moveTo(x, y)
+
 
 
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
