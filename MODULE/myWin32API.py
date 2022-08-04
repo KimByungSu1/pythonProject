@@ -1,9 +1,12 @@
 import win32con
 import win32gui
 
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import *
 
 class myWin32API(QThread):
+
+    win32ApiLog = pyqtSignal(str)  # 이벤트 시그널
+
     def __init__(self):
         QThread.__init__(self)
 
