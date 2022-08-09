@@ -2,10 +2,10 @@ import sys, os, datetime
 
 from PyQt5.QtWidgets import *
 
-from UI.test import *              #   Qt디자이너로 만든 UI
-from MODULE.mySerial import *      #   user Serial
-from MODULE.myAuto import *      #   user Auto
-
+from UI.test import *                   #   Qt디자이너로 만든 UI
+from MODULE.mySerial import *           #   user Serial
+from MODULE.myAuto import *             #   user Auto
+from MODULE.myServerClient import *      #   user Server Client
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -29,6 +29,8 @@ class MainWindow(QMainWindow):
         #   오토
         self.myAuto.autoLog.connect(self.autoLog)
 
+
+
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
@@ -38,7 +40,7 @@ class MainWindow(QMainWindow):
             if self.mySerial.serialOpen(self.ui.comboBox.currentText()) == True:    #   시리얼 오픈
                 self.mySerial.start()   #   쓰레드 시작
                 self.myAuto.initAuto()
-            self.ui.pushButton_2.setText({False: 'Connect', True: 'Disconnect'}[self.mySerial.isOpen])  # Port 상태에 따라 Connect ↔ Disconnect 버튼 글자 바꾸기
+            self.ui.pushButton_2.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
     def autoLog(self, evtAutoLog):
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록

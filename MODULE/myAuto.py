@@ -12,27 +12,38 @@ class myAuto(QThread):
         QThread.__init__(self)
         self.isAuto = False
         self.myWin32API = myWin32API()
-        self.programName = 'Gersang'
+        self.programName = '계산기'
         self.winHandleList = []
+        self.winHandleDict = {}
+        self.initAuto()         #   프로그램 실행확인 및 좌표 가져오기
 
     def run(self):
         while self.isAuto == True:
             pass
 
-    def initAuto(self):     #   오토 시작전 거상 실행중인지 확인하기
-        for win in self.myWin32API.getWindowList():
-            if (win[0] == self.programName):
-                self.winHandleList.append(win[1])
-                self.autoLog.emit('%s : %d' % (self.programName, win[1]))
+    def initAuto(self):     #   프로그램 실행확인 및 좌표 가져오기
+        self.isAuto ^= True
+        print(pyautogui.size())
+        for win in pyautogui.getWindowsWithTitle("계산기"):
+            print(win)
+            win.activate()
+            ff = np.fromfile('./TARGET_IMAGE/COMMON/삼색1.png', np.uint8)
+            img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
 
-        if len(self.winHandleList):
-            self.autoLog.emit('%s %d개 실행중입니다' %(self.programName, len(self.winHandleList)))
-        else:
-            self.autoLog.emit('%s 실행중이지 않습니다.' %(self.programName))
+            targetImg = pyautogui.locateCenterOnScreen(img, region=(win.left, win.top, win.width, win.height))  # 이미지가 있는 위치를 가져옵니다.
+            pyautogui.moveTo(targetImg)
 
-        # ff = np.fromfile('./TARGET_IMAGE/COMMON/삼색.png', np.uint8)
-        # img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
-        #
-        # x, y = pyautogui.locateCenterOnScreen(img, confidence=0.7)  # 이미지가 있는 위치를 가져옵니다.
-        # pyautogui.moveTo(x, y)
+        # for win in self.myWin32API.getWindowList():
+        #     if (win[0] == self.programName):
+        #         self.winHandleList.append(win[1])
+        #         self.autoLog.emit('프로그램 : %s, 프로그램 핸들 : %d' % (self.programName, win[1]))
+        #         self.autoLog.emit('프로그램 좌표 : ' + str(self.myWin32API.getWindowRect(win[1])))
+        #         print(self.winHandleList)
+
+
+
+    def click(self):
+        pass
+
+    def searchImage(self):
         pass
