@@ -7,13 +7,12 @@ from MODULE.myWin32API import *    #   user Win32 API
 
 class myAuto(QThread):
     autoLog = pyqtSignal(str)  # 이벤트 시그널
-    imageFoundLog = pyqtSignal(str)  # 이미지 찾았을 경우
 
     def __init__(self):
         QThread.__init__(self)
         self.isAuto = False
         self.myWin32API = myWin32API()
-        self.programName = '계산기'
+        self.programName = 'Gersang'
         self.winHandleList = []
         self.winHandleDict = {}
         self.initAuto()         #   프로그램 실행확인 및 좌표 가져오기
@@ -23,26 +22,16 @@ class myAuto(QThread):
             pass
 
     def initAuto(self):     #   프로그램 실행확인 및 좌표 가져오기
-        self.isAuto ^= True
-        for win in pyautogui.getWindowsWithTitle("계산기"):
-            # win.activate()
-            ff = np.fromfile('./TARGET_IMAGE/COMMON/삼색1.png', np.uint8)
+        pass
+
+
+    def click(self):
+        pass
+
+    def searchImage(self):
+        for win in pyautogui.getWindowsWithTitle(self.programName):
+            ff = np.fromfile('./TARGET_IMAGE/COMMON/로그인/거상_로그인_동의.png', np.uint8)
             img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
 
             targetImg = pyautogui.locateCenterOnScreen(img, region=(win.left, win.top, win.width, win.height))  # 이미지가 있는 위치를 가져옵니다.
             pyautogui.moveTo(targetImg)
-
-        # for win in self.myWin32API.getWindowList():
-        #     if (win[0] == self.programName):
-        #         self.winHandleList.append(win[1])
-        #         self.autoLog.emit('프로그램 : %s, 프로그램 핸들 : %d' % (self.programName, win[1]))
-        #         self.autoLog.emit('프로그램 좌표 : ' + str(self.myWin32API.getWindowRect(win[1])))
-        #         print(self.winHandleList)
-
-
-    def searchImage(self):      #   이미지 검색
-        pass
-
-    def imageFound(self):       #   이미지 찾았을때
-        pass
-

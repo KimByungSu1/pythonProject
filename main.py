@@ -6,6 +6,8 @@ from UI.test import *                   #   Qt디자이너로 만든 UI
 from MODULE.mySerial import *           #   user Serial
 from MODULE.myAuto import *             #   user Auto
 from MODULE.myServerClient import *      #   user Server Client
+from MODULE.myFile import *             #   user File
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -15,7 +17,9 @@ class MainWindow(QMainWindow):
         self.show()
         self.mySerial = mySerial()  #   시리얼포트 객체 생성
         self.myAuto = myAuto()  #   오토 객체 생성
-        self.myServer = myServer()    #   서버 객체 생성
+        # self.myServer = myServer()    #   서버 객체 생성
+        self.imgFolderList = imgFolderList()
+        print(self.imgFolderList)
 
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.cb_PORT.addItem(val)
@@ -34,7 +38,7 @@ class MainWindow(QMainWindow):
         self.myAuto.autoLog.connect(self.autoLog)
 
         #   서버
-        self.myServer.recv_signal.connect(self.serverLog)
+        # self.myServer.recv_signal.connect(self.serverLog)
 
 
     def buttonClick(self):
