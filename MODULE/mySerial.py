@@ -1,4 +1,4 @@
-import serial, serial.tools.list_ports
+import serial, serial.tools.list_ports, queue
 
 from PyQt5.QtCore import *
 
@@ -13,6 +13,7 @@ class mySerial(QThread):
         QThread.__init__(self)
         self.mySerial = serial.Serial()  # 시리얼 관련 객체 생성
         self.isOpen = False
+        self.txBuf = queue.Queue()  # 송신 버퍼
 
     def run(self):
         while self.isOpen == True:
@@ -22,11 +23,19 @@ class mySerial(QThread):
                 self.serialRead.emit(buf)
                 pass
 
+            if not self.txBuf.empty():  # 송신버퍼에 데이터가 있으면
+                txd = str(self.txBuf.get())         # 버퍼에 있는 데이터 가져오기
+                self.mySerial.write(txd.encode())   # 시리얼 데이터 전송
+                self.serialLog.emit(txd)            #   송신 로그 남기기
+
     def availablePorts(self):       #   사용가능한 포트 검색후 리스트 형식으로 반환
         returnAvailablePorts = []
         for port in ports:
             returnAvailablePorts.append(port.device)
         return returnAvailablePorts
+
+    def txData(self, tx):       #   사용가능한 포트 검색후 리스트 형식으로 반환
+        self.txBuf.put(tx)
 
     def serialOpen(self, COMPORT):  #   시리얼 포트 Open/Close
         try:

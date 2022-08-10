@@ -7,6 +7,7 @@ from MODULE.myWin32API import *    #   user Win32 API
 
 class myAuto(QThread):
     autoLog = pyqtSignal(str)  # 이벤트 시그널
+    imageFoundLog = pyqtSignal(str)  # 이미지 찾았을 경우
 
     def __init__(self):
         QThread.__init__(self)
@@ -23,10 +24,8 @@ class myAuto(QThread):
 
     def initAuto(self):     #   프로그램 실행확인 및 좌표 가져오기
         self.isAuto ^= True
-        print(pyautogui.size())
         for win in pyautogui.getWindowsWithTitle("계산기"):
-            print(win)
-            win.activate()
+            # win.activate()
             ff = np.fromfile('./TARGET_IMAGE/COMMON/삼색1.png', np.uint8)
             img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
 
@@ -41,9 +40,9 @@ class myAuto(QThread):
         #         print(self.winHandleList)
 
 
-
-    def click(self):
+    def searchImage(self):      #   이미지 검색
         pass
 
-    def searchImage(self):
+    def imageFound(self):       #   이미지 찾았을때
         pass
+
