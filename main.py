@@ -17,9 +17,7 @@ class MainWindow(QMainWindow):
         self.show()
         self.mySerial = mySerial()  #   시리얼포트 객체 생성
         self.myAuto = myAuto()  #   오토 객체 생성
-        # self.myServer = myServer()    #   서버 객체 생성
-        self.imgFolderList = imgFolderList()
-        print(self.imgFolderList)
+        self.myServer = myServer()    #   서버 객체 생성
 
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.cb_PORT.addItem(val)
@@ -38,7 +36,7 @@ class MainWindow(QMainWindow):
         self.myAuto.autoLog.connect(self.autoLog)
 
         #   서버
-        # self.myServer.recv_signal.connect(self.serverLog)
+        self.myServer.rcvMsgLog.connect(self.serverLog)
 
 
     def buttonClick(self):
@@ -54,7 +52,7 @@ class MainWindow(QMainWindow):
 
         if btnName == "pb_Connect":
             self.myServer.start()
-            self.ui.pb_Connect.setText({False: 'Connect', True: 'Disconnect'}[self.myServer.isServer])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
+            self.ui.pb_Connect.setText({False: 'Connect', True: 'Disconnect'}[self.myServer.isRunning()])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
 
     def lineEditEnter(self):
