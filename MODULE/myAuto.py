@@ -22,6 +22,12 @@ class myAuto(QThread):
             pass
 
     def initAuto(self):     #   프로그램 실행확인 및 좌표 가져오기
+        for win in pyautogui.getWindowsWithTitle(self.programName):
+            ff = np.fromfile('./TARGET_IMAGE/COMMON/로그인/거상_로그인_동의.png', np.uint8)
+            img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
+
+            targetImg = pyautogui.locateCenterOnScreen(img, region=(win.left, win.top, win.width, win.height))  # 이미지가 있는 위치를 가져옵니다.
+            pyautogui.moveTo(targetImg)
         pass
 
 
