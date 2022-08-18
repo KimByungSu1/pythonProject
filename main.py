@@ -1,4 +1,4 @@
-import sys, os, datetime, keyboard
+import sys, os, datetime
 
 from PyQt5.QtWidgets import *
 
@@ -9,16 +9,15 @@ from MODULE.myServerClient import *      #   user Server Client
 from MODULE.myFile import *             #   user File
 
 
-
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)       # Qt디자이너로 생성된 UI
         self.show()
-        self.mySerial = mySerial()  #   시리얼포트 객체 생성
-        self.myAuto = myAuto()  #   오토 객체 생성
-        self.myServer = myServer()    #   서버 객체 생성
+        self.mySerial = mySerial()      #   시리얼포트 객체 생성
+        self.myAuto = myAuto()          #   오토 객체 생성
+        self.myServer = myServer()      #   서버 객체 생성
 
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.cb_PORT.addItem(val)
@@ -39,7 +38,6 @@ class MainWindow(QMainWindow):
         #   서버
         self.myServer.rcvMsgLog.connect(self.serverLog)
 
-
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
@@ -52,12 +50,10 @@ class MainWindow(QMainWindow):
             self.ui.pb_Open.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
         if btnName == "pb_Connect":
-            if self.myServer.isRunning():
-                self.myServer.stop()
-                self.ui.pb_Connect.setText('Connect')  # 서버 상태에 따라 Connect ↔ Disconnet 버튼 글자 바꾸기
-            else:
-                self.myServer.start()
-                self.ui.pb_Connect.setText('Disconnect')  # 서버 상태에 따라 Connect ↔ Disconnet 버튼 글자 바꾸기
+            # if self.myServer.serverOpen() == True:
+            self.myServer.start()
+            self.myServer.clientInfo()
+            # self.ui.pb_Connect.setText({False: 'Connect', True: 'Disconnect'}[self.myServer.isServerOpen])  # server 상태에 따라 connect ↔ Disconnect 버튼 글자 바꾸기
 
 
     def lineEditEnter(self):
