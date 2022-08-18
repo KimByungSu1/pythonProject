@@ -1,5 +1,6 @@
 import socketserver, socket, asyncio
 import sys
+import threading
 import time
 import traceback
 from threading import Thread
@@ -85,6 +86,7 @@ class myServer(QThread):
                 self.th.append(t)
                 self.client.append(client_socket)
                 self.address.append(client_addr)
+                t.daemon = True  # 프로그램 종료시 프로세스도 함께 종료 (백그라운드 재생 X)
                 t.start()
 
                 # msg = client_socket.recv(SIZE)  # 클라이언트가 보낸 메시지 반환
@@ -105,12 +107,12 @@ class myServer(QThread):
 
         clientSocket.close()
         self.rcvMsgLog.emit("Client at : {0} disconnected...".format(clientAddress))
-
         for idx, cli in enumerate(self.client):
             if cli == clientSocket:
-                print(idx)
-                print(cli)
-                #self.client.remove(idx+1)
+                del self.client[idx]
+                del self.address[idx]
+                del self.th[idx]
+
 
         #for idx, addr in enumerate(self.address):
         #    if addr == clientAddress:
@@ -120,6 +122,7 @@ class myServer(QThread):
         print(self.client)
         print(self.address)
         print(self.th)
+        print(threading.current_thread())
 
     def clientDisconnect(self, msg):
         print(msg)
