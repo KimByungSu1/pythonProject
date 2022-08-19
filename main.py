@@ -50,7 +50,6 @@ class MainWindow(QMainWindow):
             self.ui.pb_Open.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
         if btnName == "pb_Connect":
-            # if self.myServer.serverOpen() == True:
             self.myServer.start()
             self.myServer.clientInfo()
             # self.ui.pb_Connect.setText({False: 'Connect', True: 'Disconnect'}[self.myServer.isServerOpen])  # server 상태에 따라 connect ↔ Disconnect 버튼 글자 바꾸기
@@ -66,7 +65,6 @@ class MainWindow(QMainWindow):
             self.ui.le_txCommand.clear()
             pass
 
-
     def autoLog(self, evtAutoLog):
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtAutoLog)
@@ -81,16 +79,6 @@ class MainWindow(QMainWindow):
     def serverLog(self, evtServerLog):
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtServerLog)
-
-
-
-
-
-
-
-
-
-
 
 
 
