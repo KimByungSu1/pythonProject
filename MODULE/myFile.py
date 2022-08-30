@@ -13,7 +13,7 @@ def imgFolderList():         #   이미지 폴더 및 파일 딕셔너리 형태
         newFolderPath = dir_path + '/' + folder
         fileList = []
         for item in os.listdir(newFolderPath):
-            if os.path.isfile(os.path.join(newFolderPath, item)):  # 폴더라면
+            if os.path.isfile(os.path.join(newFolderPath, item)):  # 파일이라면
                 fileList.append(item)
         resDict[folder] = fileList
 

@@ -4,7 +4,6 @@ import threading
 from PyQt5.QtCore import *
 
 HOST = socket.gethostbyname(socket.gethostname())
-print(HOST)
 PORT = 502
 SIZE = 1024
 ADDR = (HOST, PORT)
