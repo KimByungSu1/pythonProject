@@ -6,7 +6,6 @@ from UI.test import *                   #   Qt디자이너로 만든 UI
 from MODULE.mySerial import *           #   user Serial
 from MODULE.myAuto import *             #   user Auto
 from MODULE.myServerClient import *      #   user Server Client
-from MODULE.myFile import *             #   user File
 
 
 class MainWindow(QMainWindow):
@@ -25,7 +24,9 @@ class MainWindow(QMainWindow):
         # BUTTONS
         self.ui.pb_Open.clicked.connect(self.buttonClick)
         self.ui.pb_Connect.clicked.connect(self.buttonClick)
+        self.ui.pb_loadImage1.clicked.connect(self.buttonClick)
 
+        # lineEdit
         self.ui.le_txCommand.returnPressed.connect(self.lineEditEnter)
 
         # 시리얼
@@ -46,13 +47,20 @@ class MainWindow(QMainWindow):
         if btnName == "pb_Open":
             if self.mySerial.serialOpen(self.ui.cb_PORT.currentText()) == True:    #   시리얼 오픈
                 self.mySerial.start()   #   쓰레드 시작
-                self.myAuto.initAuto()
+                self.myAuto.start()
+            else:
+                self.myAuto.isAuto = False
+
             self.ui.pb_Open.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
         if btnName == "pb_Connect":
             self.myServer.start()
             self.myServer.clientInfo()
             # self.ui.pb_Connect.setText({False: 'Connect', True: 'Disconnect'}[self.myServer.isServerOpen])  # server 상태에 따라 connect ↔ Disconnect 버튼 글자 바꾸기
+
+        if btnName == "pb_loadImage1":
+            fName = QFileDialog.getOpenFileName(self, "Open File", "./")
+            print(fName)
 
 
     def lineEditEnter(self):
@@ -63,7 +71,7 @@ class MainWindow(QMainWindow):
         if editName == "le_txCommand":
             self.mySerial.txData(self.ui.le_txCommand.text())
             self.ui.le_txCommand.clear()
-            pass
+
 
     def autoLog(self, evtAutoLog):
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
@@ -79,8 +87,6 @@ class MainWindow(QMainWindow):
     def serverLog(self, evtServerLog):
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtServerLog)
-
-
 
 # SETTINGS WHEN TO START
 # Set the initial class and also additional parameters of the "QApplication" class

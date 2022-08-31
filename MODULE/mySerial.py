@@ -28,6 +28,7 @@ class mySerial(QThread):
                 self.mySerial.write(txd.encode())       # 시리얼 데이터 전송
                 # self.serialLog.emit(txd)              #   송신 로그 남기기
 
+
     def availablePorts(self):       #   사용가능한 포트 검색후 리스트 형식으로 반환
         returnAvailablePorts = []
         for port in ports:
