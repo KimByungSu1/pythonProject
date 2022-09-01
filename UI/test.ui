@@ -24,22 +24,6 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="3" column="0" colspan="3">
-        <widget class="QLineEdit" name="le_txCommand"/>
-       </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="QTextEdit" name="textEdit"/>
-       </item>
-       <item row="4" column="2">
-        <widget class="QLineEdit" name="le_imagePath1"/>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="lb_image1">
-         <property name="text">
-          <string>1번 이미지 발견시 </string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0" colspan="3">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
@@ -110,6 +94,32 @@
         <widget class="QPushButton" name="pb_loadImage1">
          <property name="text">
           <string>불러오기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="lb_image1">
+         <property name="text">
+          <string>1번 이미지</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2">
+        <widget class="QLineEdit" name="le_imagePath1"/>
+       </item>
+       <item row="3" column="0" colspan="3">
+        <widget class="QLineEdit" name="le_txCommand"/>
+       </item>
+       <item row="2" column="0" colspan="3">
+        <widget class="QTextEdit" name="textEdit"/>
+       </item>
+       <item row="5" column="2">
+        <widget class="QTextEdit" name="te_keyEvent"/>
+       </item>
+       <item row="5" column="1">
+        <widget class="QPushButton" name="pb_keyEventRecord">
+         <property name="text">
+          <string>매크로 설정 시작</string>
          </property>
         </widget>
        </item>
