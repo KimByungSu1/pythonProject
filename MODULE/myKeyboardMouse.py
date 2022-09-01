@@ -11,6 +11,7 @@ class myKeyboardMouse(QThread):
     def __init__(self):
         QThread.__init__(self)
         self.isKeyMouse = False
+        self.Key = None
         self.pressKey = None
         self.releaseKey = None
 
@@ -19,17 +20,19 @@ class myKeyboardMouse(QThread):
             # Collect events until released
             with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
                 listener.join()
-            pass
+
 
     def on_press(self, key):
         if self.pressKey != key:
             self.pressKey = key
-            print('{0} pressed'.format(key))
+            self.releaseKey = None
+            print('{0} 누름'.format(key))
 
     def on_release(self, key):
         if self.releaseKey != key:
             self.releaseKey = key
-            print('{0} release'.format(key))
+            self.pressKey = None
+            print('{0} 뗌'.format(key))
         if key == Key.esc:
             # Stop listener
             return False
