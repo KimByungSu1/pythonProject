@@ -65,6 +65,7 @@ class myKeyboardMouse(QThread):
             with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
                 listener.join()
 
+
     def on_press(self, key):
         if self.prePressKey != key: #   이전 키눌림 상태와 비교해서 다르다면
             self.prePressKey = key
@@ -90,16 +91,3 @@ class myKeyboardMouse(QThread):
                     if key.name in x.name:
                         self.keyLog.emit("{0} 떼기".format(key.name))
                         break
-
-        if key == keyboard.Key.esc:
-            # Stop listener
-            self.isKey = False
-            return False
-
-    def arduinoKeyValue(self, keyName): #   윈도우 가상 키 코드를 아두이노 키코드로 변환
-
-
-
-        pass
-
-
