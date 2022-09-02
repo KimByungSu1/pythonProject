@@ -1,41 +1,105 @@
+import enum
+
 import keyboard
 
-from pynput.keyboard import Key, Listener
+from pynput import *
 
 from PyQt5.QtCore import *
 
 from PyQt5.QtCore import Qt
 
+class arduinoKeyCode(enum.Enum):
+    ctrl_l = 0x80
+    shift_l = enum.auto()
+    alt_l = enum.auto()
+    cmd_l = enum.auto()
+    ctrl_r = enum.auto()
+    shift_r = enum.auto()
+    alt_r = enum.auto()
+    cmd_r = enum.auto()
+
+    right = 0xD7
+    left = enum.auto()
+    down = enum.auto()
+    up = enum.auto()
+
+    enter = 0xB0
+    esc = enum.auto()
+    backspace = enum.auto()
+    tab = enum.auto()
+
+    insert = 0xD1
+    home = enum.auto()
+    page_up = enum.auto()
+    delete = enum.auto()
+    end = enum.auto()
+    page_down = enum.auto()
+
+    caps_lock = 0xC1
+    f1 = enum.auto()
+    f2 = enum.auto()
+    f3 = enum.auto()
+    f4 = enum.auto()
+    f5 = enum.auto()
+    f6 = enum.auto()
+    f7 = enum.auto()
+    f8 = enum.auto()
+    f9 = enum.auto()
+    f10 = enum.auto()
+    f11 = enum.auto()
+    f12 = enum.auto()
+
 class myKeyboardMouse(QThread):
+    keyLog = pyqtSignal(str)  # 시리얼 이벤트 시그널
 
     def __init__(self):
         QThread.__init__(self)
-        self.isKeyMouse = False
-        self.Key = None
-        self.pressKey = None
-        self.releaseKey = None
+        self.isKey = False          #   쓰레드 동작 여부
+        self.prePressKey = None     #   이전 press 확인
+        self.preReleaseKey = None   #   이전 release 확인
+        self.arduinoKeyDict = {}
 
     def run(self):
-        while self.isKeyMouse == True:
+        while self.isKey == True:
             # Collect events until released
-            with Listener(on_press=self.on_press, on_release=self.on_release) as listener:
+            with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
                 listener.join()
 
-
     def on_press(self, key):
-        if self.pressKey != key:
-            self.pressKey = key
-            self.releaseKey = None
-            print('{0} 누름'.format(key))
+        if self.prePressKey != key: #   이전 키눌림 상태와 비교해서 다르다면
+            self.prePressKey = key
+            self.preReleaseKey = None
+
+            try:
+                self.keyLog.emit("{0} 눌림".format(key.char))
+            except AttributeError:
+                for x in arduinoKeyCode:
+                    if key.name in x.name:
+                        self.keyLog.emit("{0} 눌림".format(key.name))
+                        break
 
     def on_release(self, key):
-        if self.releaseKey != key:
-            self.releaseKey = key
-            self.pressKey = None
-            print('{0} 뗌'.format(key))
-        if key == Key.esc:
+        if self.preReleaseKey != key:   #   이전 release 상태와 비교해서 다르다면
+            self.preReleaseKey = key
+            self.prePressKey = None
+
+            try:
+                self.keyLog.emit("{0} 떼기".format(key.char))
+            except AttributeError:
+                for x in arduinoKeyCode:
+                    if key.name in x.name:
+                        self.keyLog.emit("{0} 떼기".format(key.name))
+                        break
+
+        if key == keyboard.Key.esc:
             # Stop listener
+            self.isKey = False
             return False
 
+    def arduinoKeyValue(self, keyName): #   윈도우 가상 키 코드를 아두이노 키코드로 변환
+
+
+
+        pass
 
 

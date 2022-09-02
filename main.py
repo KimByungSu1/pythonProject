@@ -42,6 +42,9 @@ class MainWindow(QMainWindow):
         #   서버
         self.myServer.rcvMsgLog.connect(self.serverLog)
 
+        #   키보드 마우스 이벤트
+        self.myKeyboardMouse.keyLog.connect(self.keyLog)
+
 
     def buttonClick(self):
         # GET BUTTON CLICKED
@@ -49,13 +52,13 @@ class MainWindow(QMainWindow):
         btnName = btn.objectName()
 
         if btnName == "pb_keyEventRecord":
-            if self.myKeyboardMouse.isKeyMouse == False:
-                self.myKeyboardMouse.isKeyMouse = True
-                self.myKeyboardMouse.start()    #   키보드 마우스 이벤트 기록 시작
+            if self.myKeyboardMouse.isKey == False:
+                self.myKeyboardMouse.isKey = True
+                self.myKeyboardMouse.start()    #   키보드 이벤트 기록 시작
             else:
-                self.myKeyboardMouse.isKeyMouse = False #   키보드 마우스 이벤트 종료
+                self.myKeyboardMouse.isKey = False #   키보드 이벤트 기록 종료
 
-            self.ui.pb_keyEventRecord.setText({False: '매크로 설정 시작', True: '기록중...'}[self.myKeyboardMouse.isKeyMouse])
+            self.ui.pb_keyEventRecord.setText({False: '매크로 설정 시작', True: '기록중...'}[self.myKeyboardMouse.isKey])
 
         if btnName == "pb_Open":
             if self.mySerial.serialOpen(self.ui.cb_PORT.currentText()) == True:    #   시리얼 오픈
@@ -78,8 +81,6 @@ class MainWindow(QMainWindow):
                 pixmap = QPixmap(fName[0])
                 self.ui.lb_image1.setPixmap(pixmap)
 
-
-
     def lineEditEnter(self):
         # GET BUTTON CLICKED
         lineEdit = self.sender()
@@ -90,20 +91,23 @@ class MainWindow(QMainWindow):
             self.ui.le_txCommand.clear()
 
 
-    def autoLog(self, evtAutoLog):
+    def autoLog(self, evtAutoLog):      #   오토 이벤트
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtAutoLog)
 
-    def serialLog(self, evtSerialLog):
+    def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtSerialLog)
 
-    def serialRead(self, rcvData):
+    def serialRead(self, rcvData):      #   시리얼 통신 이벤트
         self.ui.textEdit.append(rcvData)
 
-    def serverLog(self, evtServerLog):
+    def serverLog(self, evtServerLog):      #   서버 클라이언트 이벤트
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtServerLog)
+
+    def keyLog(self, key):          #   키보드 마우스 이벤트
+        self.ui.te_keyEvent.append(key)
 
 # SETTINGS WHEN TO START
 # Set the initial class and also additional parameters of the "QApplication" class
