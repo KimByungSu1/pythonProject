@@ -58,6 +58,7 @@ class myKeyboardMouse(QThread):
         self.prePressKey = None     #   이전 press 확인
         self.preReleaseKey = None   #   이전 release 확인
         self.recordKey = []         #   키입력 순서 기록
+        self.leftCtrl = False       #   왼쪽 컨트롤키 눌림 확인용
         
 
     def run(self):
@@ -76,6 +77,9 @@ class myKeyboardMouse(QThread):
                 self.keyLog.emit("{0} 눌림".format(key.char))
                 self.recordKey.append(key.char)
             except AttributeError:
+                if key == keyboard.Key.ctrl_l:  # left 컨트롤키 눌림
+                    self.leftCtrl = True
+
                 for x in arduinoKeyCode:
                     if key.name in x.name:
                         self.keyLog.emit("{0} 눌림".format(key.name))
@@ -91,6 +95,9 @@ class myKeyboardMouse(QThread):
                 self.keyLog.emit("{0} 떼기".format(key.char))
                 self.recordKey.append(key.char)
             except AttributeError:
+                if key == keyboard.Key.ctrl_l:  # left 컨트롤키 눌림
+                    self.leftCtrl = False
+
                 for x in arduinoKeyCode:
                     if key.name in x.name:
                         self.keyLog.emit("{0} 떼기".format(key.name))
