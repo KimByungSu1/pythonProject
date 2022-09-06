@@ -8,7 +8,7 @@ from PyQt5.QtCore import *
 
 from PyQt5.QtCore import Qt
 
-class arduinoKeyCode(enum.Enum):
+class arduinoKeyCode(enum.Enum):    #   아두이노 레오나르도 키코드값
     ctrl_l = 0x80
     shift_l = enum.auto()
     alt_l = enum.auto()
@@ -57,14 +57,15 @@ class myKeyboardMouse(QThread):
         self.isKey = False          #   쓰레드 동작 여부
         self.prePressKey = None     #   이전 press 확인
         self.preReleaseKey = None   #   이전 release 확인
-        self.arduinoKeyDict = {}
+        self.recordKey = []         #   키입력 순서 기록
+        
 
     def run(self):
+        self.recordKey.clear()
         while self.isKey == True:
             # Collect events until released
             with keyboard.Listener(on_press=self.on_press, on_release=self.on_release) as listener:
                 listener.join()
-
 
     def on_press(self, key):
         if self.prePressKey != key: #   이전 키눌림 상태와 비교해서 다르다면
@@ -73,10 +74,12 @@ class myKeyboardMouse(QThread):
 
             try:
                 self.keyLog.emit("{0} 눌림".format(key.char))
+                self.recordKey.append(key.char)
             except AttributeError:
                 for x in arduinoKeyCode:
                     if key.name in x.name:
                         self.keyLog.emit("{0} 눌림".format(key.name))
+                        self.recordKey.append(x.value)
                         break
 
     def on_release(self, key):
@@ -86,8 +89,15 @@ class myKeyboardMouse(QThread):
 
             try:
                 self.keyLog.emit("{0} 떼기".format(key.char))
+                self.recordKey.append(key.char)
             except AttributeError:
                 for x in arduinoKeyCode:
                     if key.name in x.name:
                         self.keyLog.emit("{0} 떼기".format(key.name))
+                        self.recordKey.append(x.value)
                         break
+
+            if key == keyboard.Key.f11:  # f11키 감지시 record 종료
+                print(self.recordKey)
+                self.isKey = False
+                return False

@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
         self.myServer = myServer()      #   서버 객체 생성
         self.myKeyboardMouse = myKeyboardMouse()  # 키보드 마우스 이벤트 처리
 
+
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.cb_PORT.addItem(val)
 
@@ -54,9 +55,10 @@ class MainWindow(QMainWindow):
         if btnName == "pb_keyEventRecord":
             if self.myKeyboardMouse.isKey == False:
                 self.myKeyboardMouse.isKey = True
-                self.myKeyboardMouse.start()    #   키보드 이벤트 기록 시작
+                self.ui.te_keyEvent.clear()
+                self.myKeyboardMouse.start()        #   키보드 이벤트 기록 시작
             else:
-                self.myKeyboardMouse.isKey = False #   키보드 이벤트 기록 종료
+                self.myKeyboardMouse.isKey = False  #   키보드 이벤트 기록 종료
 
             self.ui.pb_keyEventRecord.setText({False: '매크로 설정 시작', True: '기록중...'}[self.myKeyboardMouse.isKey])
 
@@ -90,11 +92,6 @@ class MainWindow(QMainWindow):
             self.mySerial.txData(self.ui.le_txCommand.text())
             self.ui.le_txCommand.clear()
 
-
-    def autoLog(self, evtAutoLog):      #   오토 이벤트
-        nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
-        self.ui.textEdit.append(nowTime + evtAutoLog)
-
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtSerialLog)
@@ -108,6 +105,14 @@ class MainWindow(QMainWindow):
 
     def keyLog(self, key):          #   키보드 마우스 이벤트
         self.ui.te_keyEvent.append(key)
+        self.ui.pb_keyEventRecord.setText({False: '매크로 설정 시작', True: '기록중...'}[self.myKeyboardMouse.isKey])
+
+    def autoLog(self, evtAutoLog):  # 오토 이벤트
+        nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
+        self.ui.textEdit.append(nowTime + evtAutoLog)
+        self.ui.textEdit.append(''.join(self.myKeyboardMouse.recordKey[:-2]))
+        #self.ui.textEdit.append(''.join(self.myKeyboardMouse.recordKey))
+
 
 # SETTINGS WHEN TO START
 # Set the initial class and also additional parameters of the "QApplication" class

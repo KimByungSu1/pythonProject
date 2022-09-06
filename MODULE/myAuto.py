@@ -31,7 +31,7 @@ class myAuto(QThread):
         self.isAuto = True
         self.autoLog.emit("Auto Start")
         while self.isAuto == True:
-            # self.searchImage()
+            self.searchImage()
             pass
 
     def initAuto(self):     #   프로그램 실행확인 및 좌표 가져오기
