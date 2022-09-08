@@ -52,8 +52,8 @@ class myAuto(QThread):
 
     def searchImage(self):
         # start = time.time()
-        for win in self.winDict.values():
-            for x in self.imageDict.values():
+        for win in self.winDict.values():       #   등록된 프로그램이 있는경우
+            for x in self.imageDict.values():   #   이미지 찾기
                 for j in x:
                     ff = np.fromfile(j, np.uint8)
                     img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array

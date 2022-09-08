@@ -74,8 +74,17 @@ class myKeyboardMouse(QThread):
             self.preReleaseKey = None
 
             try:
-                self.keyLog.emit("{0} 눌림".format(key.char))
-                self.recordKey.append(key.char)
+                if self.leftCtrl:
+                    if key.char == None:    #   컨트롤 + '`' ~ '=' 조합키 누를시
+                        returnKey = chr(int(str(key)[1:-1]))
+                    else:
+                        returnKey = chr(ord(key.char) + 96)
+                else:
+                    returnKey = key.char
+
+                self.keyLog.emit("{0} 눌림".format(returnKey))
+                self.recordKey.append(returnKey)
+
             except AttributeError:
                 if key == keyboard.Key.ctrl_l:  # left 컨트롤키 눌림
                     self.leftCtrl = True
@@ -92,8 +101,17 @@ class myKeyboardMouse(QThread):
             self.prePressKey = None
 
             try:
-                self.keyLog.emit("{0} 떼기".format(key.char))
-                self.recordKey.append(key.char)
+                if self.leftCtrl:
+                    if key.char == None:    #   컨트롤 + '`' ~ '=' 조합키 누를시
+                        returnKey = chr(int(str(key)[1:-1]))
+                    else:
+                        returnKey = chr(ord(key.char) + 96)
+                else:
+                    returnKey = key.char
+
+                self.keyLog.emit("{0} 떼기".format(returnKey))
+                self.recordKey.append(returnKey)
+
             except AttributeError:
                 if key == keyboard.Key.ctrl_l:  # left 컨트롤키 눌림
                     self.leftCtrl = False
