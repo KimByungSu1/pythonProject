@@ -128,6 +128,6 @@ class myKeyboardMouse(QThread):
                         break
 
             if key == keyboard.Key.f11:  # f11키 감지시 record 종료
-                self.keyRecordLog.emit(self.recordKey[:-2])
+                self.keyRecordLog.emit(self.recordKey[:-4])
                 self.isKey = False
                 return False

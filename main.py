@@ -109,7 +109,9 @@ class MainWindow(QMainWindow):
         self.ui.pb_keyEventRecord.setText({False: '매크로 설정 시작', True: '기록중...'}[self.myKeyboardMouse.isKey])
 
     def keyRecordLog(self, keyRecord):          #   키보드 마우스 기록 이벤트
+        print(keyRecord)
         retStr = ''.join(keyRecord)
+        print(retStr)
         self.mySerial.txData(retStr)
 
     def autoLog(self, evtAutoLog):  # 오토 이벤트

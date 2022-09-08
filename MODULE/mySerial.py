@@ -20,7 +20,6 @@ class mySerial(QThread):
             buf = self.mySerial.readall()
 
             if buf:  # 수신 Data 존재시
-
                 print(buf)
                 print(buf.decode('latin-1', errors='backslashreplace'))
                 self.serialRead.emit(buf.decode('latin-1', errors='backslashreplace'))
