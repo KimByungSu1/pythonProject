@@ -50,7 +50,8 @@ class arduinoKeyCode(enum.Enum):    #   아두이노 레오나르도 키코드�
     f12 = enum.auto()
 
 class myKeyboardMouse(QThread):
-    keyLog = pyqtSignal(str)  # 시리얼 이벤트 시그널
+    keyLog = pyqtSignal(str)  # 키보드 이벤트 시그널
+    keyRecordLog = pyqtSignal(list)  # 키보드 기록 종료 이벤트 시그널
 
     def __init__(self):
         QThread.__init__(self)
@@ -83,6 +84,7 @@ class myKeyboardMouse(QThread):
                     returnKey = key.char
 
                 self.keyLog.emit("{0} 눌림".format(returnKey))
+                self.recordKey.append(chr(0x01))
                 self.recordKey.append(returnKey)
 
             except AttributeError:
@@ -92,7 +94,8 @@ class myKeyboardMouse(QThread):
                 for x in arduinoKeyCode:
                     if key.name in x.name:
                         self.keyLog.emit("{0} 눌림".format(key.name))
-                        self.recordKey.append(x.value)
+                        self.recordKey.append(chr(0x01))
+                        self.recordKey.append(chr(x.value))
                         break
 
     def on_release(self, key):
@@ -110,6 +113,7 @@ class myKeyboardMouse(QThread):
                     returnKey = key.char
 
                 self.keyLog.emit("{0} 떼기".format(returnKey))
+                self.recordKey.append(chr(0x02))
                 self.recordKey.append(returnKey)
 
             except AttributeError:
@@ -119,10 +123,11 @@ class myKeyboardMouse(QThread):
                 for x in arduinoKeyCode:
                     if key.name in x.name:
                         self.keyLog.emit("{0} 떼기".format(key.name))
-                        self.recordKey.append(x.value)
+                        self.recordKey.append(chr(0x02))
+                        self.recordKey.append(chr(x.value))
                         break
 
             if key == keyboard.Key.f11:  # f11키 감지시 record 종료
-                print(self.recordKey)
+                self.keyRecordLog.emit(self.recordKey[:-2])
                 self.isKey = False
                 return False

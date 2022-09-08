@@ -45,6 +45,7 @@ class MainWindow(QMainWindow):
 
         #   키보드 마우스 이벤트
         self.myKeyboardMouse.keyLog.connect(self.keyLog)
+        self.myKeyboardMouse.keyRecordLog.connect(self.keyRecordLog)
 
 
     def buttonClick(self):
@@ -107,10 +108,15 @@ class MainWindow(QMainWindow):
         self.ui.te_keyEvent.append(key)
         self.ui.pb_keyEventRecord.setText({False: '매크로 설정 시작', True: '기록중...'}[self.myKeyboardMouse.isKey])
 
+    def keyRecordLog(self, keyRecord):          #   키보드 마우스 기록 이벤트
+        retStr = ''.join(keyRecord)
+        self.mySerial.txData(retStr)
+
     def autoLog(self, evtAutoLog):  # 오토 이벤트
         nowTime = datetime.datetime.now().strftime('(%H:%M:%S:%f')[:-3] + ')' + " : "  # 송,수신 시간 기록
         self.ui.textEdit.append(nowTime + evtAutoLog)
         self.ui.textEdit.append(''.join(self.myKeyboardMouse.recordKey[:-2]))
+
         #self.ui.textEdit.append(''.join(self.myKeyboardMouse.recordKey))
 
 

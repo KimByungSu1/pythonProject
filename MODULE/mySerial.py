@@ -17,15 +17,17 @@ class mySerial(QThread):
 
     def run(self):
         while self.isOpen == True:
-            buf = self.mySerial.readall().decode()
+            buf = self.mySerial.readall()
 
             if buf:  # 수신 Data 존재시
-                print(len(buf))
-                self.serialRead.emit(buf)
 
-            if not self.txBuf.empty():  # 송신버퍼에 데이터가 있으면
-                txd = self.txBuf.get() + '\n'           # 버퍼에 있는 데이터 가져오기 + '\n' 문자 추가
-                self.mySerial.write(txd.encode())       # 시리얼 데이터 전송
+                print(buf)
+                print(buf.decode('latin-1', errors='backslashreplace'))
+                self.serialRead.emit(buf.decode('latin-1', errors='backslashreplace'))
+
+            if self.txBuf.empty() == False:  # 송신버퍼에 데이터가 있으면
+                txd = chr(0x1E) + self.txBuf.get() + chr(0x1F)   # 시작문자 0x02, 종료문자 0x03
+                self.mySerial.write(txd.encode(encoding='UTF-8'))       # 시리얼 데이터 전송
                 # self.serialLog.emit(txd)              #   송신 로그 남기기
 
 
