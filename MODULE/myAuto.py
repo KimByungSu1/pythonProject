@@ -22,7 +22,7 @@ class myAuto(QThread):
         QThread.__init__(self)
         self.isAuto = False
         self.myWin32API = myWin32API()
-        self.programName = '계산기'
+        self.programName = 'Gersang'
         self.winDict = {}       #   프로그램 관련 변수
         self.imageDict = imgFolderList()    #   찾을 이미지 불러오기
         self.initAuto()         #   프로그램 실행확인 및 좌표 가져오기
@@ -57,11 +57,12 @@ class myAuto(QThread):
                 for j in x:
                     ff = np.fromfile(j, np.uint8)
                     img = cv2.imdecode(ff, cv2.IMREAD_UNCHANGED)  # img = array
-                    targetImg = pyautogui.locateCenterOnScreen(img, region=(win[2], win[3], win[4], win[5]))  # 이미지가 있는 위치를 가져옵니다.
+                    # targetImg = pyautogui.locateCenterOnScreen(img, confidence=0.6, region=(win[2], win[3], win[4], win[5]))  # 이미지가 있는 위치를 가져옵니다.
+                    targetImg = pyautogui.locateCenterOnScreen(img, confidence=0.8)  # 이미지가 있는 위치를 가져옵니다.
 
                     if targetImg != None:
-                        self.autoLog.emit("Image Found : {0}".format(targetImg))    #   이미지 찾음
-                        # pyautogui.moveTo(targetImg) #   이미지 발견시 해당 이미지로 이동
+                        self.autoLog.emit("Image Found : {0}, {1}".format(targetImg, j))    #   이미지 찾음
+                        pyautogui.moveTo(targetImg) #   이미지 발견시 해당 이미지로 이동
 
         # print(time.time() - start)
 
