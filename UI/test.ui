@@ -6,122 +6,105 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>996</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <item>
-     <widget class="QFrame" name="frame">
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="1">
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="title">
+       <string>전투 완료 후 경고</string>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QListWidget" name="lw_battleAfterWarning"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="title">
+       <string>대기화면</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0" colspan="3">
-        <widget class="QGroupBox" name="groupBox">
-         <property name="title">
-          <string>GroupBox</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="le_IP"/>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>COM</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="3">
-           <widget class="QLineEdit" name="le_PORT"/>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>PORT</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>IP</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <widget class="QPushButton" name="pb_Open">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4">
-           <widget class="QPushButton" name="pb_Connect">
-            <property name="text">
-             <string>PushButton</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="cb_PORT"/>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="cb_clientList"/>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Client</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2" colspan="2">
-           <widget class="QLineEdit" name="le_clientMsg"/>
-          </item>
-         </layout>
-        </widget>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QListWidget" name="lw_wait"/>
        </item>
-       <item row="4" column="1">
-        <widget class="QPushButton" name="pb_loadImage1">
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>전투 진입 전 경고</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QListWidget" name="lw_battleWarning"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="2">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>전투 진입</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QListWidget" name="lw_battle"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox_4">
+      <property name="title">
+       <string>전투 대기</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QListWidget" name="lw_battleWait"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="2">
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="title">
+       <string>GroupBox</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QListWidget" name="listWidget_7"/>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QGroupBox" name="groupBox_7">
+      <property name="title">
+       <string>시리얼</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cb_baudRate"/>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="pb_open">
          <property name="text">
-          <string>불러오기</string>
+          <string>Open</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="lb_image1">
-         <property name="text">
-          <string>1번 이미지</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="QLineEdit" name="le_imagePath1"/>
-       </item>
-       <item row="3" column="0" colspan="3">
-        <widget class="QLineEdit" name="le_txCommand"/>
-       </item>
-       <item row="2" column="0" colspan="3">
-        <widget class="QTextEdit" name="textEdit"/>
-       </item>
-       <item row="5" column="2">
-        <widget class="QTextEdit" name="te_keyEvent"/>
-       </item>
-       <item row="5" column="1">
-        <widget class="QPushButton" name="pb_keyEventRecord">
-         <property name="text">
-          <string>매크로 설정 시작</string>
-         </property>
-        </widget>
+       <item row="0" column="0">
+        <widget class="QComboBox" name="cb_comport"/>
        </item>
       </layout>
      </widget>
