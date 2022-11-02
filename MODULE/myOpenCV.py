@@ -45,12 +45,14 @@ class myOpenCV(QThread):
                 break
     def screenshot(self):
         hwnd = win32gui.FindWindow(None, self.window_name)
+
         if not hwnd:
             raise Exception('Window not found: ' + self.window_name)
 
+
         left, top, right, bot = win32gui.GetClientRect(hwnd)
         x, y = win32gui.ClientToScreen(hwnd, (left, top))
-        #print(x+1920, y, *win32gui.ClientToScreen(hwnd, (right - x, bot - y)))
+        #print(x+1920, y, *win32gui.ClientToScreen(hwnd, (right-x, bot-y)))
 
         return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=(x+1920, y, *win32gui.ClientToScreen(hwnd, (right - x, bot - y))))), cv2.COLOR_RGB2BGR)
         #return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=(x, y, *win32gui.ClientToScreen(hwnd, (right - x, bot - y))))), cv2.COLOR_RGB2BGR)

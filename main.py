@@ -8,8 +8,60 @@ from UI.test import *                   #   Qt디자이너로 만든 UI
 from MODULE.myOpenCV import *           #   user Serial
 from MODULE.mySerial import *           #   user Serial
 from MODULE.myAuto import *             #   user Auto
+from MODULE.myFile import *             #   user file save
 from MODULE.myServerClient import *      #   user Server Client
 from MODULE.myKeyboardMouse import *      #   user 키보드 마우스 이벤트
+
+
+# startMMSI = 44070
+# endMMSI = 44101
+# count = 0
+#
+# txtDic = {}
+# imgDic = {}
+#
+# resultTotalCount = 0
+# resultImgTotalCount = 0
+#
+#
+# path = r'C:\Users\BSK\Downloads\25'
+# file_list = os.listdir(path)
+# file_list_py = [file for file in file_list if file.endswith("44070.txt")]
+#
+# for length in range(0, endMMSI-startMMSI):
+#     count = 0
+#     for file in file_list:
+#         if file.endswith("{0}.txt".format(startMMSI)):
+#             #print(startMMSI, file)
+#             count = count + 1
+#     txtDic[startMMSI] = count
+#     resultTotalCount = resultTotalCount + count
+#     startMMSI = startMMSI + 1
+#
+# startMMSI = 44070
+# for length in range(0, endMMSI-startMMSI):
+#     count = 0
+#     for file in file_list:
+#         if file.endswith("{0}-1.jpg".format(startMMSI)):
+#             #print(startMMSI, file)
+#             count = count + 1
+#         if file.endswith("{0}-2.jpg".format(startMMSI)):
+#             #print(startMMSI, file)
+#             count = count + 1
+#         if file.endswith("{0}-3.jpg".format(startMMSI)):
+#             #print(startMMSI, file)
+#             count = count + 1
+#     imgDic[startMMSI] = count
+#     resultImgTotalCount = resultImgTotalCount + count
+#     startMMSI = startMMSI + 1
+#
+# print('MMSI 국소별 시정 센서 수신 카운트 : ', txtDic.values())
+# print('MMSI 국소별 이미지 수신 카운트 : ', imgDic.values())
+# print('txt file total count : ', resultTotalCount)
+# print('image1 file total count : ', resultImgTotalCount)
+# print('total img txt file : ', resultTotalCount + resultImgTotalCount)
+#print ("file_list_py: {0}".format(file_list_py))
+#print ("file_list_44070: {0}".format(len(file_list_py)))
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -31,8 +83,8 @@ class MainWindow(QMainWindow):
         for i, baud in enumerate(serial.Serial.BAUDRATES):  # 9600이상 사용가능한 Baud rate 콤보 박스에 추가
             if (baud >= 9600):
                 self.ui.cb_baudRate.addItem(str(baud))
-            #if (baud == 115200):
-                # self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
+            if (baud == 115200):
+                self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
 
         # BUTTONS
         self.ui.pb_open.clicked.connect(self.buttonClick)
@@ -56,12 +108,12 @@ class MainWindow(QMainWindow):
     @pyqtSlot(tuple)
     def searchImageResult(self, pos):
         #print(pyautogui.position())
-        self.posX = pos[0]
-        self.posY = pos[1]
+        self.posX = int((pos[0]+1920)/2)
+        self.posY = int(pos[1]/2)
 
         if self.mySerial.isOpen:
-            #print("$MOUSE,MOVE,{0},{1},*\r\n".format(self.posX, self.posY))
-            self.mySerial.txData("$MOUSE,MOVE,{0},{1},*00\r\n".format(self.posX, self.posY))
+            print("$MOUSE,{0},{1},*\r\n".format(self.posX, self.posY))
+            self.mySerial.txData("$MOUSE,{0},{1},*00\r\n".format(self.posX, self.posY))
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         print(evtSerialLog)
