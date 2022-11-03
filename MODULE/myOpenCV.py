@@ -16,6 +16,8 @@ from PyQt5.QtCore import *
 
 ImageGrab.grab = partial(ImageGrab.grab, all_screens=True)
 
+X_POS = 1920
+
 class myOpenCV(QThread):
     searchPos = pyqtSignal(tuple)  # 찾은 이미지 x, y 좌표
 
@@ -23,6 +25,8 @@ class myOpenCV(QThread):
         QThread.__init__(self)
         self.window_name = "Gersang"
         self.wait_time = 1 / FRAME_RATE
+        self.programX = 0
+        self.programY = 0
 
         self.methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR', 'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
 
@@ -52,9 +56,12 @@ class myOpenCV(QThread):
 
         left, top, right, bot = win32gui.GetClientRect(hwnd)
         x, y = win32gui.ClientToScreen(hwnd, (left, top))
-        #print(x+1920, y, *win32gui.ClientToScreen(hwnd, (right-x, bot-y)))
+        #print(x, y, *win32gui.ClientToScreen(hwnd, (right-x, bot-y)))
 
-        return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=(x+1920, y, *win32gui.ClientToScreen(hwnd, (right - x, bot - y))))), cv2.COLOR_RGB2BGR)
+        self.programX = x
+        self.programY = y
+
+        return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=(x+X_POS, y, *win32gui.ClientToScreen(hwnd, (right - x, bot - y))))), cv2.COLOR_RGB2BGR)
         #return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=(x, y, *win32gui.ClientToScreen(hwnd, (right - x, bot - y))))), cv2.COLOR_RGB2BGR)
 
     def searchImage(self, img_src, img_template):
@@ -78,7 +85,7 @@ class myOpenCV(QThread):
             startX, startY = box
             endX, endY = startX + w, startY + h
             cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
-            searchImagePos = (int((startX + endX)/2), int((startY + endY)/2))
+            searchImagePos = (int((startX + endX)/2) + self.programX, int((startY + endY)/2) + self.programY)
             self.searchPos.emit(searchImagePos)
     def gaussianBlur(self, img):
         image_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 흑백으로 변환

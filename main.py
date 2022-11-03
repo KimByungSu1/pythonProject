@@ -74,6 +74,12 @@ class MainWindow(QMainWindow):
         self.searchImg = myOpenCV()
         self.searchImg.start()
 
+        self.timer = QTimer()
+        self.timer.start(100)  #   1초마다
+        self.timer.timeout.connect(self.timer100msec)
+
+        self.toggle = 0
+
         self.posX = 0
         self.posY = 0
 
@@ -94,6 +100,10 @@ class MainWindow(QMainWindow):
 
         # 시리얼 수신
         self.mySerial.serialLog.connect(self.serialLog)
+    def timer100msec(self):
+        self.ui.le_posX.setText(str(pyautogui.position().x))
+        self.ui.le_posY.setText(str(pyautogui.position().y))
+
 
     def buttonClick(self):
         # GET BUTTON CLICKED
@@ -107,12 +117,15 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(tuple)
     def searchImageResult(self, pos):
-        #print(pyautogui.position())
-        self.posX = int((pos[0]+1920)/2)
-        self.posY = int(pos[1]/2)
+        if self.searchImg.programX != 0:
+            self.ui.le_progX.setText(str(self.searchImg.programX))
+            self.ui.le_progY.setText(str(self.searchImg.programY))
+
+        self.posX = int(pos[0] - pyautogui.position().x)
+        self.posY = int(pos[1] - pyautogui.position().y)
 
         if self.mySerial.isOpen:
-            print("$MOUSE,{0},{1},*\r\n".format(self.posX, self.posY))
+            #print("$MOUSE,{0},{1},*\r\n".format(self.posX, self.posY))
             self.mySerial.txData("$MOUSE,{0},{1},*00\r\n".format(self.posX, self.posY))
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
