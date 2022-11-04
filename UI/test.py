@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(673, 73)
+        MainWindow.resize(755, 476)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -67,6 +67,18 @@ class Ui_MainWindow(object):
         self.le_Accuracy.setObjectName("le_Accuracy")
         self.gridLayout_4.addWidget(self.le_Accuracy, 0, 3, 1, 1)
         self.gridLayout.addWidget(self.groupBox_9, 0, 2, 1, 1)
+        self.groupBox = QtWidgets.QGroupBox(self.centralwidget)
+        self.groupBox.setObjectName("groupBox")
+        self.gridLayout_5 = QtWidgets.QGridLayout(self.groupBox)
+        self.gridLayout_5.setObjectName("gridLayout_5")
+        self.te_log = QtWidgets.QTextEdit(self.groupBox)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.te_log.setFont(font)
+        self.te_log.setReadOnly(True)
+        self.te_log.setObjectName("te_log")
+        self.gridLayout_5.addWidget(self.te_log, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.groupBox, 1, 0, 1, 3)
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -85,3 +97,9 @@ class Ui_MainWindow(object):
         self.le_monitorPos.setText(_translate("MainWindow", "1920"))
         self.label_4.setText(_translate("MainWindow", "정확도"))
         self.le_Accuracy.setText(_translate("MainWindow", "0.9"))
+        self.groupBox.setTitle(_translate("MainWindow", "기록"))
+        self.te_log.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"</style></head><body style=\" font-family:\'Gulim\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt;\"><br /></p></body></html>"))

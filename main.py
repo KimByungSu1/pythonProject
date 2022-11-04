@@ -1,4 +1,5 @@
 import sys, os, datetime
+import time
 
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -121,12 +122,15 @@ class MainWindow(QMainWindow):
         wheel = int(pos[3])
 
         if self.mySerial.isOpen:
-            print("$MOUSE,{0},{1},{2},{3},*\r\n".format(click, posX, posY, wheel))
+            #print("$MOUSE,{0},{1},{2},{3},*\r\n".format(click, posX, posY, wheel))
             self.mySerial.txData("$MOUSE,{0},{1},{2},{3},*00\r\n".format(click, posX, posY, wheel))
 
     @pyqtSlot(str)
-    def searchImageFileResult(self, fName):
-        print(fName)
+    def searchImageFileResult(self, resultMsg):
+        if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
+            self.ui.te_log.clear()  # ASCII tx 로그 초기화
+
+        self.ui.te_log.append(resultMsg)
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         print(evtSerialLog)

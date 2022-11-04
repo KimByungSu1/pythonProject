@@ -35,6 +35,8 @@ class myOpenCV(QThread):
         self.wait_time = 1 / FRAME_RATE         #   서치 시간
         
         self.state = 0   #   현재 단계 확인
+        self.battleSuccess = 0  #   정상적으로 전투 완료 한 횟수
+        self.totalBattle = 0  # 총 전투 완료 횟수
 
         self.methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR', 'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
         self.getWindowList()
@@ -135,6 +137,17 @@ class myOpenCV(QThread):
                         self.searchPos.emit(result[1])
                         self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 반계탕 or 삼계탕 먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), self.state))
 
+            if self.battleSuccess > 4:      #   정상적으로 전투 종료 횟수가 x회 이상이면
+                result = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\snack.bmp')  # 삼색채 먹기
+                if result[0] == True:  # 반계탕, 삼계탕 사용
+                    result[1][0] = 2  # 우클릭
+                    self.searchPos.emit(result[1])
+                    self.searchPos.emit(result[1])
+                    self.searchPos.emit(result[1])
+                    self.searchPos.emit(result[1])
+                    self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 포만감 채우기".format(str(r'.\IMAGE\HOME\snack.bmp'), self.state))
+                self.battleSuccess = 0
+
             self.state = self.state + 1
 
         elif self.state == 1: # 몬스터 클릭 후 경고 화면 또는 암행어사 발견시
@@ -153,24 +166,31 @@ class myOpenCV(QThread):
                 
             result = self.searchImage(pos, captureImg, r'.\IMAGE\BATTLE\battleOption.bmp')         # 정상적으로 전투 진입시
             if result != None:  # 전투 진입 후 옵션창 발견시
-                self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 몬스터 클릭 후 암행어사창 발견".format(str(r'.\IMAGE\BATTLE\battleOption.bmp'), self.state))
+                self.searchPos.emit(result[1])  # 해당위치로 마우스 이동
+                self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 전투 진입 후 옵션창 발견".format(str(r'.\IMAGE\BATTLE\battleOption.bmp'), self.state))
                 self.state = self.state + 1
                 
         elif self.state == 2: # 전투 중
             for imgPath in self.searchTemplateFolder():
-                pass
+                result = self.searchImage(pos, captureImg, imgPath)  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
+                if result != None:  #전투중 스킬 사용하고자 하는 이미지 인식되었다면
+                    self.searchPos.emit(result[1])  #   해당위치로 마우스 이동
+                    self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 해당 좌표로 이동".format(str(imgPath), self.state))
+                    break
+            self.state = self.state + 1
 
+        elif self.state == 3: # 전투 종료 대기
             result = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
             if result != None:  # 전투 종료 후 신용등급 이미지 발견시
                 self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 정상적으로 전투 종료".format(str(r'.\IMAGE\HOME\credit.bmp'), self.state))
                 self.state = self.state + 1
                 
-        elif self.state == 3: # 전투 종료 후
-            result = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
-            if result != None:  # 전투 종료 후 신용등급 이미지 발견시
-                self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}, 정상적으로 전투 종료".format(str(r'.\IMAGE\HOME\credit.bmp'), self.state))
-                self.state = 0  #   다시 홈화면부터 이미지 검색
-
+        elif self.state == 4:  # 전투 종료
+            self.battleSuccess = self.battleSuccess + 1
+            self.totalBattle = self.totalBattle + 1
+            self.searchImgFile.emit("총 전투 횟수 : {0}, 정상 전투 횟수 : {1}, 수행단계 : {2}".format(self.totalBattle, self.battleSuccess, self.state))
+            self.state = 0  #   다시 원점으로
+            
         #self.searchPos.emit(pos)
         #self.searchImgFile.emit("찾은 이미지 : {0}, 수행단계 : {1}".format(str(img), self.state))
 
