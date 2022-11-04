@@ -24,7 +24,6 @@ class myWin32API(QThread):
         return output                               #   윈도우타이틀, 윈도우 핸들 튜플 형식으로 반환  ex (Gersang, 62231)
 
     def getWindowRect(self, winHandle):             #   윈도우 핸들 사각 좌표 가져오기
-        if winHandle == '':
-            pass
-        else:
-            return win32gui.GetWindowRect(winHandle)     # (left, top, right, bottom)
+        left, top, right, bot = win32gui.GetClientRect(winHandle)
+        x, y = win32gui.ClientToScreen(winHandle, (left, top))
+        return x, y, right, bot

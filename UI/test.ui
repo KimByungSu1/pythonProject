@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>903</width>
-    <height>299</height>
+    <width>673</width>
+    <height>73</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,78 +15,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="1">
-     <widget class="QGroupBox" name="groupBox_5">
-      <property name="title">
-       <string>전투 완료 후 경고</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
-       <item>
-        <widget class="QListWidget" name="lw_battleAfterWarning"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>대기화면</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QListWidget" name="lw_wait"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QGroupBox" name="groupBox_2">
-      <property name="title">
-       <string>전투 진입 전 경고</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QListWidget" name="lw_battleWarning"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="2">
-     <widget class="QGroupBox" name="groupBox_3">
-      <property name="title">
-       <string>전투 진입</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QListWidget" name="lw_battle"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="title">
-       <string>전투 대기</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QListWidget" name="lw_battleWait"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="2">
-     <widget class="QGroupBox" name="groupBox_6">
-      <property name="title">
-       <string>GroupBox</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_7">
-       <item>
-        <widget class="QListWidget" name="listWidget_7"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox_7">
       <property name="title">
@@ -141,28 +69,36 @@
     <item row="0" column="2">
      <widget class="QGroupBox" name="groupBox_9">
       <property name="title">
-       <string>해상도</string>
+       <string>Monitor</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_4">
        <item row="0" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
-          <string>X</string>
+          <string>Abs Pos</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="le_progX"/>
+        <widget class="QLineEdit" name="le_monitorPos">
+         <property name="text">
+          <string>1920</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="2">
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Y</string>
+          <string>정확도</string>
          </property>
         </widget>
        </item>
        <item row="0" column="3">
-        <widget class="QLineEdit" name="le_progY"/>
+        <widget class="QLineEdit" name="le_Accuracy">
+         <property name="text">
+          <string>0.9</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

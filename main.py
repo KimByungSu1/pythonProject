@@ -72,16 +72,11 @@ class MainWindow(QMainWindow):
 
         self.mySerial = mySerial()  # 시리얼포트 객체 생성
         self.searchImg = myOpenCV()
-        self.searchImg.start()
+
 
         self.timer = QTimer()
         self.timer.start(100)  #   1초마다
         self.timer.timeout.connect(self.timer100msec)
-
-        self.toggle = 0
-
-        self.posX = 0
-        self.posY = 0
 
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.cb_comport.addItem(val)
@@ -96,7 +91,8 @@ class MainWindow(QMainWindow):
         self.ui.pb_open.clicked.connect(self.buttonClick)
 
         # 이미지 서치 결과
-        self.searchImg.searchPos.connect(self.searchImageResult)
+        self.searchImg.searchPos.connect(self.searchImagePosResult)
+        self.searchImg.searchImgFile.connect(self.searchImageFileResult)
 
         # 시리얼 수신
         self.mySerial.serialLog.connect(self.serialLog)
@@ -112,21 +108,25 @@ class MainWindow(QMainWindow):
         if btnName == "pb_open":
             if self.mySerial.serialOpen(self.ui.cb_comport.currentText(), self.ui.cb_baudRate.currentText()) == True:  # 시리얼 오픈
                 self.mySerial.start()  # 쓰레드 시작
+                self.searchImg.userInit(int(self.ui.le_monitorPos.text()), float(self.ui.le_Accuracy.text()))
+                self.searchImg.start()
 
             self.ui.pb_open.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
-    @pyqtSlot(tuple)
-    def searchImageResult(self, pos):
-        if self.searchImg.programX != 0:
-            self.ui.le_progX.setText(str(self.searchImg.programX))
-            self.ui.le_progY.setText(str(self.searchImg.programY))
-
-        self.posX = int(pos[0] - pyautogui.position().x)
-        self.posY = int(pos[1] - pyautogui.position().y)
+    @pyqtSlot(list)
+    def searchImagePosResult(self, pos):
+        click = int(pos[0])
+        posX = int(pos[1] - pyautogui.position().x)
+        posY = int(pos[2] - pyautogui.position().y)
+        wheel = int(pos[3])
 
         if self.mySerial.isOpen:
-            #print("$MOUSE,{0},{1},*\r\n".format(self.posX, self.posY))
-            self.mySerial.txData("$MOUSE,{0},{1},*00\r\n".format(self.posX, self.posY))
+            print("$MOUSE,{0},{1},{2},{3},*\r\n".format(click, posX, posY, wheel))
+            self.mySerial.txData("$MOUSE,{0},{1},{2},{3},*00\r\n".format(click, posX, posY, wheel))
+
+    @pyqtSlot(str)
+    def searchImageFileResult(self, fName):
+        print(fName)
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         print(evtSerialLog)
