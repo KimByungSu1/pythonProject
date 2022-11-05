@@ -124,7 +124,7 @@ class MainWindow(QMainWindow):
         wheel = int(pos[3])
 
         if self.mySerial.isOpen:
-            sendTx = "$MOUSE,{0},{1},{2},{3},*00\r\n".format(click, posX, posY, wheel)
+            sendTx = self.mySerial.CtrlAddCheckSum("$MOUSE,{0},{1},{2},{3},*".format(click, posX, posY, wheel))
             #print(sendTx)
             self.mySerial.txData(sendTx)
 

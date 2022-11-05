@@ -1,4 +1,4 @@
-import win32api
+import win32api, binascii
 import win32gui
 import numpy as np
 import cv2, os, glob
@@ -50,7 +50,7 @@ class myOpenCV(QThread):
         self.getWindowList()
         #self.searchTemplateFolder(self.searchProgramHandle)
 
-        self.delay = 0.2
+        self.delay = 0.5
 
         for i in self.searchProgramHandle:  #   프로그램별 전투카운트 계산
             self.battleSuccess[i] = 0  #   정상적으로 전투 완료 한 횟수
@@ -153,14 +153,15 @@ class myOpenCV(QThread):
             time.sleep(self.delay)      #   딜레이
 
         if k != 0:
-            s = ''
-            for key in list(k):
-                s = ','.join([str(n) for n in Keycode(0, key)])
-                self.returnKey.emit("$KEYBOARD,{0},*00\r\n".format(s))
+            tx = "$KEYBOARD,0,0,{0},*".format(k)
+            #print(tx)
+            self.returnKey.emit(CtrlAddCheckSum(tx))
             time.sleep(self.delay)  # 딜레이
 
+
+
     def currentState(self, hwnd, pos, captureImg):     #   현재 오토 단계 확인
-        centerPos = self.searchProgramPos[hwnd][0]/2, self.searchProgramPos[hwnd][1]/2
+        centerPos = 1580, 1040
         if self.state[hwnd] == 0: # 대기화면
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\death.bmp')    #   사망 확인창 발견시
             if resultPos is not None: #   사망 경고창 확인 좌표 발견시
@@ -216,9 +217,10 @@ class myOpenCV(QThread):
             for imgPath in self.searchTemplateFolder(hwnd):
                 resultPos = self.searchImage(pos, captureImg, imgPath)  # 사냥터 스킬 시전 위치 확인
                 if resultPos is not None:  # 전투중 스킬 사용하고자 하는 이미지 인식되었다면
-                    sendKeyboard = "1ee2ee3ee4ee"
+                    sendKeyboard = "1e2e3e4e"
                     self.hidSendReport(Mousecode(0, resultPos, 0), sendKeyboard, "찾은 이미지 : {0}, handle : {1}, 해당 좌표로 이동".format(str(imgPath), hwnd))
-                    time.sleep(0.5)
+                    break
+                    #self.hidSendReport(Mousecode(0, centerPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, dummy 좌표로 이동".format(str(imgPath), hwnd))
 
             self.state[hwnd] = self.state[hwnd] + 1
             
@@ -237,6 +239,23 @@ class myOpenCV(QThread):
     def gaussianBlur(self, img):
         image_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 흑백으로 변환
         return cv2.GaussianBlur(image_gray, (5, 5), 0)
+
+def CtrlAddCheckSum(txStr):
+    CheckSum = 0
+    CheckSumResult = 0
+    for x in txStr:
+        if x == '$':
+            continue
+        elif x == '*':
+            if CheckSum <= 15:  # 체크섬 결과가 15(dec)보다 낮으면 hex로 0xf로 표시되 따라서 0x0f로 표시 하기위해 '0'추가
+                CheckSumResult = '0' + (str(hex(CheckSum))[2:].upper()) + "\r\n"
+            else:
+                CheckSumResult = (str(hex(CheckSum))[2:].upper()) + "\r\n"
+            return txStr + CheckSumResult  # 종료문자 발견시 xor연산 결과 + '\r' + '\n' 추가
+        else:
+            CheckSum ^= ord(x)  # 문자를 int(아스키) 변환및 종료문자 발견까지 xor
+
+    return False  # '*'종료문자 발견 못할시 False
 
 def Mousecode(clcik, pos, wheel):
     hidSend = []
@@ -263,6 +282,11 @@ def Keycode(special, key):
     hidSend.append(0)                       # reserved
     hidSend.append(keyMap[key])  # 입력할키
     hidSend.append(0)  # 입력할키
+    hidSend.append(0)  # 입력할키
+    hidSend.append(0)  # 입력할키
+    hidSend.append(0)  # 입력할키
+    hidSend.append(0)  # 입력할키
+
 
     return hidSend
 

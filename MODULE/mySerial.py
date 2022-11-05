@@ -59,3 +59,20 @@ class mySerial(QThread):
             self.serialLog.emit(e)
 
         return self.isOpen
+
+    def CtrlAddCheckSum(self, txStr):
+        CheckSum = 0
+        CheckSumResult = 0
+        for x in txStr:
+            if x == '$':
+                continue
+            elif x == '*':
+                if CheckSum <= 15:  # 체크섬 결과가 15(dec)보다 낮으면 hex로 0xf로 표시되 따라서 0x0f로 표시 하기위해 '0'추가
+                    CheckSumResult = '0' + (str(hex(CheckSum))[2:].upper()) + "\r\n"
+                else:
+                    CheckSumResult = (str(hex(CheckSum))[2:].upper()) + "\r\n"
+                return txStr + CheckSumResult  # 종료문자 발견시 xor연산 결과 + '\r' + '\n' 추가
+            else:
+                CheckSum ^= ord(x)  # 문자를 int(아스키) 변환및 종료문자 발견까지 xor
+
+        return False  # '*'종료문자 발견 못할시 False
