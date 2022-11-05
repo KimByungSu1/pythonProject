@@ -93,7 +93,8 @@ class MainWindow(QMainWindow):
 
         # 이미지 서치 결과
         self.searchImg.searchPos.connect(self.searchImagePosResult)
-        self.searchImg.searchImgFile.connect(self.searchImageFileResult)
+        self.searchImg.searchImgLog.connect(self.searchLog)
+        self.searchImg.returnKey.connect(self.keyControl)
 
         # 시리얼 수신
         self.mySerial.serialLog.connect(self.serialLog)
@@ -122,11 +123,18 @@ class MainWindow(QMainWindow):
         wheel = int(pos[3])
 
         if self.mySerial.isOpen:
-            #print("$MOUSE,{0},{1},{2},{3},*\r\n".format(click, posX, posY, wheel))
+            print("$MOUSE,{0},{1},{2},{3},*\r\n".format(click, posX, posY, wheel))
             self.mySerial.txData("$MOUSE,{0},{1},{2},{3},*00\r\n".format(click, posX, posY, wheel))
 
+    @pyqtSlot(list)
+    def keyControl(self, key):
+        if self.mySerial.isOpen:
+            s = ','.join([str(n) for n in key])
+            print("$KEYBOARD,{0},*\r\n".format(s))
+            self.mySerial.txData("$KEYBOARD,{0},*00\r\n".format(s))
+
     @pyqtSlot(str)
-    def searchImageFileResult(self, resultMsg):
+    def searchLog(self, resultMsg):
         if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
             self.ui.te_log.clear()  # ASCII tx 로그 초기화
 

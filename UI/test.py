@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(755, 476)
+        MainWindow.resize(656, 476)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
@@ -94,7 +94,7 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Pos Y"))
         self.groupBox_9.setTitle(_translate("MainWindow", "Monitor"))
         self.label_3.setText(_translate("MainWindow", "Abs Pos"))
-        self.le_monitorPos.setText(_translate("MainWindow", "1920"))
+        self.le_monitorPos.setText(_translate("MainWindow", "0"))
         self.label_4.setText(_translate("MainWindow", "정확도"))
         self.le_Accuracy.setText(_translate("MainWindow", "0.9"))
         self.groupBox.setTitle(_translate("MainWindow", "기록"))
@@ -102,4 +102,4 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'Gulim\'; font-size:12pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:16pt;\"><br /></p></body></html>"))
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:\'Gulim\'; font-size:16pt;\"><br /></p></body></html>"))
