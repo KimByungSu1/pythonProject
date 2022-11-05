@@ -64,6 +64,7 @@ from MODULE.myKeyboardMouse import *      #   user 키보드 마우스 이벤트
 #print ("file_list_py: {0}".format(file_list_py))
 #print ("file_list_44070: {0}".format(len(file_list_py)))
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
@@ -123,15 +124,20 @@ class MainWindow(QMainWindow):
         wheel = int(pos[3])
 
         if self.mySerial.isOpen:
-            print("$MOUSE,{0},{1},{2},{3},*\r\n".format(click, posX, posY, wheel))
-            self.mySerial.txData("$MOUSE,{0},{1},{2},{3},*00\r\n".format(click, posX, posY, wheel))
+            sendTx = "$MOUSE,{0},{1},{2},{3},*00\r\n".format(click, posX, posY, wheel)
+            #print(sendTx)
+            self.mySerial.txData(sendTx)
 
-    @pyqtSlot(list)
+    @pyqtSlot(str)
     def keyControl(self, key):
         if self.mySerial.isOpen:
-            s = ','.join([str(n) for n in key])
-            print("$KEYBOARD,{0},*\r\n".format(s))
-            self.mySerial.txData("$KEYBOARD,{0},*00\r\n".format(s))
+           # s = ','.join([str(n) for n in key])
+            #print("$KEYBOARD,{0},*\r\n".format(key))
+            #self.mySerial.txData("$KEYBOARD,{0},*00\r\n".format(key))
+            #print(key)
+            self.mySerial.txData(key)
+
+            #self.mySerial.txData(key)
 
     @pyqtSlot(str)
     def searchLog(self, resultMsg):
@@ -141,8 +147,14 @@ class MainWindow(QMainWindow):
         self.ui.te_log.append(resultMsg)
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
+        splitString = evtSerialLog.split(',')
         print(evtSerialLog)
 
+        if splitString[0] == '$MOUSE':
+            pass
+
+        if splitString[0] == '$KEYBOARD':
+            pass
 
 
 

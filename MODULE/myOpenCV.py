@@ -4,6 +4,8 @@ import numpy as np
 import cv2, os, glob
 import pyautogui
 import time
+import pywinauto
+import pygetwindow as gw
 
 from playsound import playsound
 from PIL import ImageGrab
@@ -21,7 +23,7 @@ X_POS = 1920
 
 class myOpenCV(QThread):
     searchPos = pyqtSignal(list)  # 찾은 이미지 x, y 좌표
-    returnKey = pyqtSignal(list)  # 키보드 리턴
+    returnKey = pyqtSignal(str)  # 키보드 리턴
     searchImgLog = pyqtSignal(str)  # 찾은 이미지 파일
 
     def __init__(self):
@@ -32,6 +34,7 @@ class myOpenCV(QThread):
 
         self.templateBattle = {}                # 전투 템플릿 이미지
         self.templatehome = {}                  # 홈 템플릿 이미지
+        self.warning = {}                       #   클라이언트별 경고창 발견시
         
         self.wait_time = 1 / FRAME_RATE         #   서치 시간
         
@@ -39,6 +42,9 @@ class myOpenCV(QThread):
 
         self.battleSuccess = {}
         self.totalBattle = {}
+
+        self.ackMouse = {}
+        self.ackKeyboard = {}
 
         self.methods = ['cv2.TM_CCOEFF', 'cv2.TM_CCOEFF_NORMED', 'cv2.TM_CCORR', 'cv2.TM_CCORR_NORMED', 'cv2.TM_SQDIFF', 'cv2.TM_SQDIFF_NORMED']
         self.getWindowList()
@@ -50,8 +56,9 @@ class myOpenCV(QThread):
             self.battleSuccess[i] = 0  #   정상적으로 전투 완료 한 횟수
             self.totalBattle[i] = 0  # 총 전투 완료 횟수
             self.state[i] = 0
-
-
+            self.warning[i] = 0
+            self.ackMouse[i] = 0
+            self.ackKeyboard[i] = 0
 
     def userInit(self, XPos, accuracy):
         self.X_POS = XPos
@@ -92,7 +99,9 @@ class myOpenCV(QThread):
 
     def set_foreground(self, handle):
         """put the window in the foreground"""
+        pyautogui.press("alt")
         win32gui.SetForegroundWindow(handle)
+
 
     def run(self):
         while True:
@@ -101,12 +110,13 @@ class myOpenCV(QThread):
 
             for i in self.searchProgramHandle:
                 self.set_foreground(i)
-                time.sleep(0.01)
+                time.sleep(0.5)
                 captureImg = self.screenshot(self.searchProgramPos[i])          # 현재 화면 캡쳐
                 self.currentState(i, self.searchProgramPos[i], captureImg)         #   상태에 따른 이미지 찾기
 
-                #for templatePath in self.searchTemplateFolder():
-                #    self.searchImage(self.searchProgramPos[i], captureImg, templatePath)  #   이미지 찾기
+                if self.warning[i] == 1:        #   암행어사 발견시 
+                    self.set_foreground(i)      #   해당 클라이언트 상단고정
+                    time.sleep(30)              #   30초 대기
 
                 delta = time.time() - start
 
@@ -138,39 +148,45 @@ class myOpenCV(QThread):
 
     def hidSendReport(self, m, k, log):
         self.searchImgLog.emit(log)
-
         if m != 0:
             self.searchPos.emit(m)      #   마우스 제어
             time.sleep(self.delay)      #   딜레이
 
         if k != 0:
+            s = ''
             for key in list(k):
-                self.returnKey.emit(Keycode(0, key))
-                time.sleep(self.delay)  # 딜레이
+                s = ','.join([str(n) for n in Keycode(0, key)])
+                self.returnKey.emit("$KEYBOARD,{0},*00\r\n".format(s))
+            time.sleep(self.delay)  # 딜레이
 
     def currentState(self, hwnd, pos, captureImg):     #   현재 오토 단계 확인
+        centerPos = self.searchProgramPos[hwnd][0]/2, self.searchProgramPos[hwnd][1]/2
         if self.state[hwnd] == 0: # 대기화면
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\death.bmp')    #   사망 확인창 발견시
-            if resultPos != None: #   사망 경고창 확인 좌표 발견시
+            if resultPos is not None: #   사망 경고창 확인 좌표 발견시
                 self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 케릭터 사망".format(str(r'.\IMAGE\HOME\death.bmp'), hwnd))
 
                 resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\check.bmp')  #   확인창 버튼으로 이동
-                if resultPos != None:
+                if resultPos is not None:
                     self.hidSendReport(Mousecode(1, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 불사신부 사용".format(str(r'.\IMAGE\HOME\check.bmp'), hwnd))
+                    self.hidSendReport(Mousecode(0, centerPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 마우스 이동 사용".format(str(r'.\IMAGE\HOME\check.bmp'), hwnd))
 
                     resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\chicken.bmp')  # 반계탕, 삼계탕 사용
-                    if resultPos != None:  # 반계탕, 삼계탕 사용
+                    if resultPos is not None:  # 반계탕, 삼계탕 사용
                         self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 반계탕 사용".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
+                        self.hidSendReport(Mousecode(0, centerPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 마우스 이동".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
+                        
 
             if self.battleSuccess[hwnd] > 4:      #   정상적으로 전투 종료 횟수가 x회 이상이면
                 resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\snack.bmp')  # 삼색채 먹기
-                if resultPos != None:  # 반계탕, 삼계탕 사용
+                if resultPos is not None:  # 반계탕, 삼계탕 사용
                     self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 삼색채먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
                     self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 삼색채먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
                     self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 삼색채먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
                     self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 삼색채먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
                     self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 삼색채먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
                     self.hidSendReport(Mousecode(2, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 삼색채먹기".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
+                    self.hidSendReport(Mousecode(0, centerPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 마우스 이동".format(str(r'.\IMAGE\HOME\chicken.bmp'), hwnd))
 
                 self.battleSuccess[hwnd] = 0
 
@@ -178,38 +194,40 @@ class myOpenCV(QThread):
 
         elif self.state[hwnd] == 1: # 몬스터 클릭 후 경고 화면 또는 암행어사 발견시
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\WARNING\check.bmp')  # 경고창 발견시
-            if resultPos != None:  # 경고창 발견시
+            if resultPos is not None:  # 경고창 발견시
                 self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 경고창 발견".format(str(r'.\IMAGE\WARNING\check.bmp'), hwnd))
 
                 resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\WARNING\check.bmp')  # 경고창 확인 버튼 이미지 발견시
-                if resultPos != None:
+                if resultPos is not None:
                     self.hidSendReport(Mousecode(1, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 경고창 확인 버튼 클릭".format(str(r'.\IMAGE\WARNING\check.bmp'), hwnd))
 
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\WARNING\mape.bmp')         # 암행어사 발견시
-            if resultPos != None:  # 암행어사 이미지 발견시
+            if resultPos is not None:  # 암행어사 이미지 발견시
                 self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 암행어사창 발견".format(str(r'.\IMAGE\WARNING\mape.bmp'), hwnd))
+                self.warning[hwnd] = 1
                 playsound("Warning.mp3")
                 
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\BATTLE\battleOption.bmp')         # 정상적으로 전투 진입시
-            if resultPos != None:  # 전투 진입 후 옵션창 발견시
-                self.hidSendReport(Mousecode(0, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 전투 화면 옵션창 발견".format(str(r'.\IMAGE\BATTLE\battleOption.bmp'), hwnd))
+            if resultPos is not None:  # 전투 진입 후 옵션창 발견시
+                self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 전투 화면 옵션창 발견".format(str(r'.\IMAGE\BATTLE\battleOption.bmp'), hwnd))
                 self.state[hwnd] = self.state[hwnd] + 1
-                
-        elif self.state[hwnd] == 2: # 전투 중
+
+        elif self.state[hwnd] == 2: # 전투
             for imgPath in self.searchTemplateFolder(hwnd):
-                resultPos = self.searchImage(pos, captureImg, imgPath)  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
-                if resultPos != None:  #전투중 스킬 사용하고자 하는 이미지 인식되었다면
+                resultPos = self.searchImage(pos, captureImg, imgPath)  # 사냥터 스킬 시전 위치 확인
+                if resultPos is not None:  # 전투중 스킬 사용하고자 하는 이미지 인식되었다면
                     sendKeyboard = "1ee2ee3ee4ee"
                     self.hidSendReport(Mousecode(0, resultPos, 0), sendKeyboard, "찾은 이미지 : {0}, handle : {1}, 해당 좌표로 이동".format(str(imgPath), hwnd))
-                    break
-            self.state[hwnd] = self.state[hwnd] + 1
+                    time.sleep(0.5)
 
+            self.state[hwnd] = self.state[hwnd] + 1
+            
         elif self.state[hwnd] == 3: # 전투 종료 대기
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
-            if resultPos != None:  # 전투 종료 후 신용등급 이미지 발견시
-                self.hidSendReport(Mousecode(0, resultPos, 0), 0, "찾은 이미지 : {0}, handle : {1}, 해당 좌표로 이동".format(str(r'.\IMAGE\HOME\credit.bmp'), hwnd))
+            if resultPos is not None:  # 전투 종료 후 신용등급 이미지 발견시
+                self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 메인화면 발견".format(str(r'.\IMAGE\HOME\credit.bmp'), hwnd))
                 self.state[hwnd] = self.state[hwnd] + 1
-
+                
         elif self.state[hwnd] == 4:  # 전투 종료
             self.battleSuccess[hwnd] = self.battleSuccess[hwnd] + 1
             self.totalBattle[hwnd] = self.totalBattle[hwnd] + 1

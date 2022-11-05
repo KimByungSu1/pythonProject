@@ -23,11 +23,11 @@ class mySerial(QThread):
             if buf:  # 수신 Data 존재시
                 self.serialLog.emit(buf.decode('latin-1', errors='backslashreplace'))
 
-            #if not self.txBuf.empty():  # 송신버퍼에 데이터가 있으면
-            #    self.mySerial.write(self.txBuf.get().encode())  # 시리얼 데이터 전송
-            if self.tx != "":
-                self.mySerial.write(self.tx.encode())  # 시리얼 데이터 전송
-                self.tx = ""
+            if not self.txBuf.empty():  # 송신버퍼에 데이터가 있으면
+                self.mySerial.write(self.txBuf.get().encode())  # 시리얼 데이터 전송
+            #if self.tx != "":
+            #    self.mySerial.write(self.tx.encode())  # 시리얼 데이터 전송
+            #    self.tx = ""
 
 
     def availablePorts(self):       #   사용가능한 포트 검색후 리스트 형식으로 반환
@@ -37,8 +37,8 @@ class mySerial(QThread):
         return returnAvailablePorts
 
     def txData(self, tx):       #   사용가능한 포트 검색후 리스트 형식으로 반환
-        self.tx = tx
-        #self.txBuf.put(tx)
+        #self.tx = tx
+        self.txBuf.put(tx)
 
     def serialOpen(self, COMPORT, BAUD):  #   시리얼 포트 Open/Close
         try:
