@@ -226,10 +226,16 @@ class myOpenCV(QThread):
             
         elif self.state[hwnd] == 3: # 전투 종료 대기
             resultPos = self.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
-            if resultPos is not None:  # 전투 종료 후 신용등급 이미지 발견시
-                self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 메인화면 발견".format(str(r'.\IMAGE\HOME\credit.bmp'), hwnd))
-                self.state[hwnd] = self.state[hwnd] + 1
-                
+            while resultPos is not None:  # 전투 종료 대기, 종료 판단은 메인화면 신용등급 이미지로 확인
+                sendKeyboard = "1e2e3e4e"
+                self.hidSendReport(0, sendKeyboard, " handle : {0}, 스킬 반복 시전 상태".format(hwnd))
+                break
+            self.state[hwnd] = self.state[hwnd] + 1 #   신용등급 이미지 찾으면 전투종료로 판단
+            
+            # if resultPos is not None:  # 전투 종료 후 신용등급 이미지 발견시
+            #     self.hidSendReport(0, 0, "찾은 이미지 : {0}, handle : {1}, 메인화면 발견".format(str(r'.\IMAGE\HOME\credit.bmp'), hwnd))
+            #     self.state[hwnd] = self.state[hwnd] + 1
+            #
         elif self.state[hwnd] == 4:  # 전투 종료
             self.battleSuccess[hwnd] = self.battleSuccess[hwnd] + 1
             self.totalBattle[hwnd] = self.totalBattle[hwnd] + 1
