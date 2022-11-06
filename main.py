@@ -73,8 +73,7 @@ class MainWindow(QMainWindow):
         self.show()
 
         self.mySerial = mySerial()  # 시리얼포트 객체 생성
-        self.searchImg = myOpenCV()
-
+        self.myAuto = myAuto()
 
         self.timer = QTimer()
         self.timer.start(100)  #   1초마다
@@ -92,13 +91,13 @@ class MainWindow(QMainWindow):
         # BUTTONS
         self.ui.pb_open.clicked.connect(self.buttonClick)
 
-        # 이미지 서치 결과
-        self.searchImg.searchPos.connect(self.searchImagePosResult)
-        self.searchImg.searchImgLog.connect(self.searchLog)
-        self.searchImg.returnKey.connect(self.keyControl)
+        # 오토 동작 결과
+        self.myAuto.autoLog.connect(self.autoLog)
+        self.myAuto.autoSendReport.connect(self.sendCommand)
 
         # 시리얼 수신
         self.mySerial.serialLog.connect(self.serialLog)
+
     def timer100msec(self):
         self.ui.le_posX.setText(str(pyautogui.position().x))
         self.ui.le_posY.setText(str(pyautogui.position().y))
@@ -111,40 +110,24 @@ class MainWindow(QMainWindow):
         if btnName == "pb_open":
             if self.mySerial.serialOpen(self.ui.cb_comport.currentText(), self.ui.cb_baudRate.currentText()) == True:  # 시리얼 오픈
                 self.mySerial.start()  # 쓰레드 시작
-                self.searchImg.userInit(int(self.ui.le_monitorPos.text()), float(self.ui.le_Accuracy.text()))
-                self.searchImg.start()
-
+                self.myAuto.start()
+            else:
+                self.myAuto.stop()
             self.ui.pb_open.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
 
-    @pyqtSlot(list)
-    def searchImagePosResult(self, pos):
-        click = int(pos[0])
-        posX = int(pos[1] - pyautogui.position().x)
-        posY = int(pos[2] - pyautogui.position().y)
-        wheel = int(pos[3])
+    @pyqtSlot(str)
+    def sendCommand(self, tx):
+        self.mySerial.txData(tx)
 
-        if self.mySerial.isOpen:
-            sendTx = self.mySerial.CtrlAddCheckSum("$MOUSE,{0},{1},{2},{3},*".format(click, posX, posY, wheel))
-            #print(sendTx)
-            self.mySerial.txData(sendTx)
 
     @pyqtSlot(str)
-    def keyControl(self, key):
-        if self.mySerial.isOpen:
-           # s = ','.join([str(n) for n in key])
-            #print("$KEYBOARD,{0},*\r\n".format(key))
-            #self.mySerial.txData("$KEYBOARD,{0},*00\r\n".format(key))
-            #print(key)
-            self.mySerial.txData(key)
-
-            #self.mySerial.txData(key)
-
-    @pyqtSlot(str)
-    def searchLog(self, resultMsg):
-        if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
-            self.ui.te_log.clear()  # ASCII tx 로그 초기화
-
-        self.ui.te_log.append(resultMsg)
+    def autoLog(self, log):
+        print(log)
+        # if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
+        #     self.ui.te_log.clear()  # ASCII tx 로그 초기화
+        #
+        # self.ui.te_log.append(resultMsg)
+        pass
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         splitString = evtSerialLog.split(',')

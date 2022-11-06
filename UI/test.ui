@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>656</width>
-    <height>476</height>
+    <width>676</width>
+    <height>498</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,116 +15,116 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QGroupBox" name="groupBox_7">
+    <item row="1" column="0" colspan="2">
+     <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>시리얼</string>
+       <string>클라이언트</string>
       </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="1">
-        <widget class="QComboBox" name="cb_baudRate"/>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEdit_3"/>
        </item>
-       <item row="0" column="2">
-        <widget class="QPushButton" name="pb_open">
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_7">
          <property name="text">
-          <string>Open</string>
+          <string>전투횟수</string>
          </property>
         </widget>
        </item>
+       <item row="1" column="3">
+        <widget class="QLineEdit" name="lineEdit_4"/>
+       </item>
        <item row="0" column="0">
-        <widget class="QComboBox" name="cb_comport"/>
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>핸들</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEdit"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>암행어사 발생 횟수</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="text">
+          <string>현재 상태</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="lineEdit_2"/>
        </item>
       </layout>
      </widget>
     </item>
-    <item row="0" column="1">
+    <item row="0" column="0" colspan="2">
      <widget class="QGroupBox" name="groupBox_8">
       <property name="title">
-       <string>마우스</string>
+       <string>공통 설정</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
+       <item row="2" column="1">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Pos X</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="le_posX"/>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Pos Y</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLineEdit" name="le_posY"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QGroupBox" name="groupBox_9">
-      <property name="title">
-       <string>Monitor</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_4">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Abs Pos</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="le_monitorPos">
-         <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
+       <item row="1" column="5">
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>정확도</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
+       <item row="2" column="5">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Pos Y</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QLineEdit" name="le_monitorPos">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Abs Pos</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="6">
+        <widget class="QLineEdit" name="le_posY"/>
+       </item>
+       <item row="2" column="4">
+        <widget class="QLineEdit" name="le_posX"/>
+       </item>
+       <item row="1" column="6">
         <widget class="QLineEdit" name="le_Accuracy">
          <property name="text">
           <string>0.9</string>
          </property>
         </widget>
        </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="3">
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>기록</string>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0">
-        <widget class="QTextEdit" name="te_log">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-         <property name="html">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Gulim'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Gulim'; font-size:16pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cb_comport"/>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pb_open">
+         <property name="text">
+          <string>Open</string>
          </property>
         </widget>
        </item>
