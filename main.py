@@ -72,6 +72,7 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)       # Qt디자이너로 생성된 UI
         self.show()
 
+        self.move(10, 10)            #   프로그램 실행시 시작위치 10,10 으로 이동
         self.mySerial = mySerial()  # 시리얼포트 객체 생성
         self.myAuto = myAuto()
 
@@ -85,8 +86,8 @@ class MainWindow(QMainWindow):
         for i, baud in enumerate(serial.Serial.BAUDRATES):  # 9600이상 사용가능한 Baud rate 콤보 박스에 추가
             if (baud >= 9600):
                 self.ui.cb_baudRate.addItem(str(baud))
-            if (baud == 115200):
-                self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
+            #if (baud == 115200):
+                #self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
 
         # BUTTONS
         self.ui.pb_open.clicked.connect(self.buttonClick)
@@ -122,11 +123,10 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(str)
     def autoLog(self, log):
-        print(log)
-        # if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
-        #     self.ui.te_log.clear()  # ASCII tx 로그 초기화
-        #
-        # self.ui.te_log.append(resultMsg)
+        if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
+            self.ui.te_log.clear()  # ASCII tx 로그 초기화
+
+        self.ui.te_log.append(log)
         pass
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
