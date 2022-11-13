@@ -112,6 +112,13 @@ class MainWindow(QMainWindow):
         self.ui.le_posX.setText(str(pyautogui.position().x))
         self.ui.le_posY.setText(str(pyautogui.position().y))
 
+        if self.ui.chkb_jamsu_1.isChecked():
+            self.myAuto.jamsu = 1
+
+        if self.ui.chkb_jamsu_2.isChecked():
+            self.deathHero = 1
+
+
 
     def buttonClick(self):
         # GET BUTTON CLICKED

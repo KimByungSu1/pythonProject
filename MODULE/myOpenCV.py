@@ -60,6 +60,24 @@ class myOpenCV(QThread):
             searchImagePos = int((startX + endX)/2) + pos[0], int((startY + endY)/2) + pos[1]   #   발견된 이미지 가운데 좌표 가져오기
             return searchImagePos #   이미지 가운데 좌표 리턴, 발견된 이미지 없으면 None 리턴
 
+    def trueSearchImage(self, pos, img_src, img_template):      #   100퍼센트 일치하는 이미지만 찾기
+        image = img_src
+        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)    #   흑백으로 변환
+        template = cv2.imread(img_template, 0)
+        w, h = template.shape[::-1]
+        result = cv2.matchTemplate(image_gray, template, cv2.TM_CCOEFF_NORMED)
+
+        # 임계치로 찾는법
+        threshold = 0.99 # 임계치 설정
+        box_loc = np.where(result >= threshold) # 임계치 이상의 값들만 사용
+
+        for box in zip(*box_loc[::-1]):     #   이미지 비교 일치한 데이터 빨간 사각형 테두리 전부 그리기
+            startX, startY = box
+            endX, endY = startX + w, startY + h
+            cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)    #   발견된 이미지 빨간 사각형 테두리 그리기
+            searchImagePos = int((startX + endX)/2) + pos[0], int((startY + endY)/2) + pos[1]   #   발견된 이미지 가운데 좌표 가져오기
+            return searchImagePos #   이미지 가운데 좌표 리턴, 발견된 이미지 없으면 None 리턴
+
     def edge_laplacian(self):
         path = glob.glob(r'.\IMAGE\BATTLE\DRAGON\*.bmp')  # 전투 맵 이미지 반복 확인
 

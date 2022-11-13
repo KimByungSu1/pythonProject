@@ -48,6 +48,8 @@ class myAuto(QThread):
         self.gameInfo = []  # 게임내 정보
         self.clientInfo = {0: {}, 1: {}, 2: {}}  # 클라이언트 고유 정보
         self.initAuto()
+        self.jamsu = 0  #   잠수팅 방지
+        self.deathHero = 0  # 죽은용병 살리기
 
         self.timer = QTimer()
         self.timer.start(1000)  #   1초마다
@@ -101,6 +103,10 @@ class myAuto(QThread):
         time.sleep(0.3)
         win32gui.SetForegroundWindow(handle)
 
+    def searhDeathHero(self):      # 사망한 용병 찾기
+        deathPath = r'.\IMAGE\DEATH/*.bmp'
+        return glob.glob(deathPath)  ## 폴더 안에 있는 모든 파일 출력
+
     def searchBattleMap(self):      # 전투 맵 이미지
         path = self.battlePath + '/*.bmp'
         return glob.glob(path)  ## 폴더 안에 있는 모든 파일 출력
@@ -110,13 +116,16 @@ class myAuto(QThread):
             self.set_foreground(self.clientInfo[i]['Handle'])  # 이미지 서치할 클라이언트 최상단
             pos = self.clientInfo[i]['ProgramPosition']
 
-            if self.gameInfo[i].Status == 0:      # Home화면에서 행동
-                captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
-                self.homeAct(i, captureImg)
+            if self.jamsu:
+                self.EnterFunc()
+            else:
+                if self.gameInfo[i].Status == 0:      # Home화면에서 행동
+                    captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
+                    self.homeAct(i, captureImg)
 
-            elif self.gameInfo[i].Status == 1:      #   전투 대기 상태
-                captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
-                self.BattleAct(i, captureImg)
+                elif self.gameInfo[i].Status == 1:      #   전투 대기 상태
+                    captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
+                    self.BattleAct(i, captureImg)
 
     def homeAct(self, idx, captureImg):  #   Home화면에서 행동
         pos = self.clientInfo[idx]['ProgramPosition']
@@ -137,6 +146,15 @@ class myAuto(QThread):
             if creditPos:  # 정상적인 홈화면
                 if self.gameInfo[idx].BattleCount > 4:    #   4번째 전투마다 삼색채 먹기
                     self.snackEat(idx, snackPos)        #   삼색채 먹기
+
+        if True:
+            for deathHero in self.searhDeathHero():       #   죽은 용병 찾기
+                deathHeroPos = self.searchImg.trueSearchImage(pos, captureImg, deathHero)  # 전투맵 이미지 경로 저장
+                if deathHeroPos and self.deathHero:  # 죽은용병 확인시
+                    if chickenPos:  # 삼계탕 이미지 발견시
+                        self.returnCommand(idx, self.Mousecode(2, chickenPos, 0), 0, "삼계탕 사용")  # 삼계탕 사용
+                        self.gameInfo[idx].BattleCount = 0
+
         self.gameInfo[idx].Status = self.gameInfo[idx].Status + 1
 
     def BattleAct(self, idx, captureImg):  #   전투 대기 상태
@@ -183,9 +201,9 @@ class myAuto(QThread):
             self.gameInfo[idx].MapeCount = self.gameInfo[idx].MapeCount + 1
             time.sleep(20)              #   마패 찾을시간
 
-        # elif warningCheckPos:    #   기타 경고 이미지 발견시
-        #     self.returnCommand(idx, self.Mousecode(1, warningCheckPos, 0), 0, "경고창 발견")  # 확인창 이미지로 이동 후 클릭
-        #     self.gameInfo[idx].WarningCount = self.gameInfo[idx].WarningCount + 1
+        elif warningCheckPos:    #   기타 경고 이미지 발견시
+            self.returnCommand(idx, self.Mousecode(1, warningCheckPos, 0), 0, "경고창 발견")  # 확인창 이미지로 이동 후 클릭
+            self.gameInfo[idx].WarningCount = self.gameInfo[idx].WarningCount + 1
 
     def BattleWait(self, idx, captureImg):  # 전투 대기 상태
         pass
@@ -193,13 +211,12 @@ class myAuto(QThread):
     def snackEat(self, idx, snackPos): #   삼색채 먹기
         if self.gameInfo[idx].BattleCount > 5:  # 4번째 전투마다 삼색채 먹기
             if snackPos:  # 삼색채 이미지 발견시
-                for repeat in range(0, 4):  # 4번반복
+                for repeat in range(0, 5):  # 5번반복
                     self.returnCommand(idx, self.Mousecode(2, snackPos, 0), 0, "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
                     time.sleep(0.1)
                     self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
                 self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
             self.gameInfo[idx].BattleCount = 0
-        pass
 
     def returnCommand(self, idx, mouse, key, log):        #   시리얼통신으로 전달할 커맨드
         self.autoLog.emit(idx, log)
@@ -223,6 +240,12 @@ class myAuto(QThread):
     def AltTabFunc(self):
         tx = self.CtrlAddCheckSum("$KEYBOARD,{0},0,{1},*".format(chr(0x04), chr(0x09)))  #   알트
         self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+
+    def EnterFunc(self):    #   잠수방지
+        tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0}{1},*".format(chr(0x0A), ",", chr(0x0A))) #   엔터
+        self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+        time.sleep(30)  #   초마다 한번씩
+
 
     def KeyboardCode(self, modifier, key):
         tx = self.CtrlAddCheckSum("$KEYBOARD,{0},0,{1},*".format(0, key))  #   알트

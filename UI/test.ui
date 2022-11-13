@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
+    <width>560</width>
     <height>704</height>
    </rect>
   </property>
@@ -160,6 +160,13 @@
            <string>증장</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="chkb_jamsu_1">
+         <property name="text">
+          <string>잠수팅 방지</string>
+         </property>
         </widget>
        </item>
       </layout>
@@ -393,6 +400,13 @@
            <string>증장</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="chkb_jamsu_2">
+         <property name="text">
+          <string>잠수팅 방지</string>
+         </property>
         </widget>
        </item>
       </layout>
