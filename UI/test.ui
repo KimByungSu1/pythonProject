@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>676</width>
-    <height>498</height>
+    <width>530</width>
+    <height>704</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,13 +18,38 @@
     <item row="1" column="0" colspan="2">
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>클라이언트</string>
+       <string>클라이언트1</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_3"/>
+       <item row="6" column="0" colspan="7">
+        <widget class="QTextEdit" name="te_clientLog_1">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QComboBox" name="cb_tanker_1">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>항삼</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item row="1" column="0">
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>공격</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
         <widget class="QLabel" name="label_7">
          <property name="text">
           <string>전투횟수</string>
@@ -32,34 +57,110 @@
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QLineEdit" name="lineEdit_4"/>
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>탱커</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>서폿</string>
+         </property>
+        </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QCheckBox" name="chkb_dobalbu_1">
          <property name="text">
-          <string>핸들</string>
+          <string>도발부 사용</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit"/>
-       </item>
-       <item row="1" column="2">
-        <widget class="QLabel" name="label_8">
+       <item row="3" column="6">
+        <widget class="QPushButton" name="pb_useSnack_1">
          <property name="text">
-          <string>암행어사 발생 횟수</string>
+          <string>포만감채우기</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="2">
+       <item row="1" column="6">
+        <widget class="QComboBox" name="cb_support_1">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>음양</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>대남</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>미실</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_32">
+         <property name="text">
+          <string>포만감 채우기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QLineEdit" name="le_battleCount_1"/>
+       </item>
+       <item row="3" column="5">
+        <widget class="QPushButton" name="pb_useChicken_1">
+         <property name="text">
+          <string>삼계탕 사용</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QLineEdit" name="le_snackCount_1"/>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLineEdit" name="le_status_1"/>
+       </item>
+       <item row="0" column="5">
         <widget class="QLabel" name="label_6">
          <property name="text">
           <string>현재 상태</string>
          </property>
         </widget>
        </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pb_client_1">
+         <property name="text">
+          <string>클라이언트</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="3">
-        <widget class="QLineEdit" name="lineEdit_2"/>
+        <widget class="QLineEdit" name="le_handle_1"/>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QComboBox" name="cb_attacker_1">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>증장</string>
+          </property>
+         </item>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -70,24 +171,19 @@
        <string>공통 설정</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="6">
+        <widget class="QComboBox" name="cb_battleMapList">
+         <item>
+          <property name="text">
+           <string>흑룡담</string>
+          </property>
+         </item>
+        </widget>
+       </item>
        <item row="2" column="1">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>Pos X</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="5">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>정확도</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="5">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Pos Y</string>
          </property>
         </widget>
        </item>
@@ -98,18 +194,12 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_3">
+       <item row="2" column="5">
+        <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Abs Pos</string>
+          <string>Pos Y</string>
          </property>
         </widget>
-       </item>
-       <item row="2" column="6">
-        <widget class="QLineEdit" name="le_posY"/>
-       </item>
-       <item row="2" column="4">
-        <widget class="QLineEdit" name="le_posX"/>
        </item>
        <item row="1" column="6">
         <widget class="QLineEdit" name="le_Accuracy">
@@ -118,14 +208,341 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>전투</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>정확도</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Abs Pos</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pb_start">
+         <property name="text">
+          <string>시작(F10)</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QLineEdit" name="le_posX"/>
+       </item>
+       <item row="2" column="6">
+        <widget class="QLineEdit" name="le_posY"/>
+       </item>
        <item row="0" column="1">
         <widget class="QComboBox" name="cb_comport"/>
        </item>
-       <item row="0" column="4">
-        <widget class="QPushButton" name="pb_open">
-         <property name="text">
-          <string>Open</string>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QGroupBox" name="groupBox_2">
+      <property name="title">
+       <string>클라이언트2</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_6">
+       <item row="6" column="0" colspan="7">
+        <widget class="QTextEdit" name="te_clientLog_2">
+         <property name="readOnly">
+          <bool>true</bool>
          </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QComboBox" name="cb_tanker_2">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>항삼</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>공격</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="text">
+          <string>전투횟수</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>탱커</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_16">
+         <property name="text">
+          <string>서폿</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="chkb_dobalbu_2">
+         <property name="text">
+          <string>도발부 사용</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="6">
+        <widget class="QPushButton" name="pb_useSnack_2">
+         <property name="text">
+          <string>포만감채우기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6">
+        <widget class="QComboBox" name="cb_support_2">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>음양</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>대남</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>미실</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_33">
+         <property name="text">
+          <string>포만감 채우기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QLineEdit" name="le_battleCount_2"/>
+       </item>
+       <item row="3" column="5">
+        <widget class="QPushButton" name="pb_useChicken_2">
+         <property name="text">
+          <string>삼계탕 사용</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QLineEdit" name="le_snackCount_2"/>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLineEdit" name="le_status_2"/>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>현재 상태</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pb_client_2">
+         <property name="text">
+          <string>클라이언트</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="le_handle_2"/>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QComboBox" name="cb_attacker_2">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>증장</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string>클라이언트3</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="6" column="0" colspan="7">
+        <widget class="QTextEdit" name="te_clientLog_3">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QComboBox" name="cb_tanker_3">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>항삼</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_18">
+         <property name="text">
+          <string>공격</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_19">
+         <property name="text">
+          <string>전투횟수</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QLabel" name="label_20">
+         <property name="text">
+          <string>탱커</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_21">
+         <property name="text">
+          <string>서폿</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="chkb_dobalbu_3">
+         <property name="text">
+          <string>도발부 사용</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="6">
+        <widget class="QPushButton" name="pb_useSnack_3">
+         <property name="text">
+          <string>포만감채우기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6">
+        <widget class="QComboBox" name="cb_support_3">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>음양</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>대남</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>미실</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QLabel" name="label_34">
+         <property name="text">
+          <string>포만감 채우기</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" colspan="2">
+        <widget class="QLineEdit" name="le_battleCount_3"/>
+       </item>
+       <item row="3" column="5">
+        <widget class="QPushButton" name="pb_useChicken_3">
+         <property name="text">
+          <string>삼계탕 사용</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="4">
+        <widget class="QLineEdit" name="le_snackCount_3"/>
+       </item>
+       <item row="0" column="6">
+        <widget class="QLineEdit" name="le_status_3"/>
+       </item>
+       <item row="0" column="5">
+        <widget class="QLabel" name="label_22">
+         <property name="text">
+          <string>현재 상태</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pb_client_3">
+         <property name="text">
+          <string>클라이언트</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLineEdit" name="le_handle_3"/>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QComboBox" name="cb_attacker_3">
+         <item>
+          <property name="text">
+           <string>없음</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>증장</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

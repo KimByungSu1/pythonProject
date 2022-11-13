@@ -80,21 +80,30 @@ class MainWindow(QMainWindow):
         self.timer.start(100)  #   1초마다
         self.timer.timeout.connect(self.timer100msec)
 
+        self.ui.pb_start.setShortcut('F10')
         for idx, val in enumerate(self.mySerial.availablePorts()):  #   사용가능한 포트 확인
             self.ui.cb_comport.addItem(val)
 
-        for i, baud in enumerate(serial.Serial.BAUDRATES):  # 9600이상 사용가능한 Baud rate 콤보 박스에 추가
-            if (baud >= 9600):
-                self.ui.cb_baudRate.addItem(str(baud))
-            #if (baud == 115200):
-                #self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
+        # for i, baud in enumerate(serial.Serial.BAUDRATES):  # 9600이상 사용가능한 Baud rate 콤보 박스에 추가
+        #     if (baud >= 9600):
+        #         self.ui.cb_baudRate.addItem(str(baud))
+        #     if (baud == 115200):
+        #         self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
+
+        if self.ui.cb_battleMapList.currentText() == '흑룡담':
+            self.myAuto.battlePath = r'C:\Users\BSK\PycharmProjects\pythonProject\IMAGE\BATTLE\BLACK_DRAGON_MAP'
+
 
         # BUTTONS
-        self.ui.pb_open.clicked.connect(self.buttonClick)
+        self.ui.pb_start.clicked.connect(self.buttonClick)
+        self.ui.pb_client_1.clicked.connect(self.buttonClick)
+        self.ui.pb_client_2.clicked.connect(self.buttonClick)
+        self.ui.pb_client_3.clicked.connect(self.buttonClick)
 
         # 오토 동작 결과
         self.myAuto.autoLog.connect(self.autoLog)
         self.myAuto.autoSendReport.connect(self.sendCommand)
+        self.myAuto.gameInfoLog.connect(self.gameInfoLog)
 
         # 시리얼 수신
         self.mySerial.serialLog.connect(self.serialLog)
@@ -108,30 +117,85 @@ class MainWindow(QMainWindow):
         # GET BUTTON CLICKED
         btn = self.sender()
         btnName = btn.objectName()
-        if btnName == "pb_open":
-            if self.mySerial.serialOpen(self.ui.cb_comport.currentText(), self.ui.cb_baudRate.currentText()) == True:  # 시리얼 오픈
+        if btnName == "pb_start":
+            if self.mySerial.serialOpen(self.ui.cb_comport.currentText(), 115200) == True:  # 시리얼 오픈
                 self.mySerial.start()  # 쓰레드 시작
                 self.myAuto.start()
             else:
                 self.myAuto.stop()
-            self.ui.pb_open.setText({False: 'Open', True: 'Close'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
+            self.ui.pb_start.setText({False: '시작', True: '정지'}[self.mySerial.isOpen])  # Port 상태에 따라 Open ↔ Close 버튼 글자 바꾸기
+
+        if btnName == "pb_client_1":    #   1번클라이언트 핸들 지정하기
+            if self.myAuto.clientInfo[0]['Handle']:
+                self.myAuto.set_foreground(self.myAuto.clientInfo[0]['Handle'])
+                self.ui.le_handle_1.setText(str(self.myAuto.clientInfo[0]['Handle']))
+                self.myAuto.clientInfo[0]['Attacker'] = self.ui.cb_attacker_1.currentText()
+                self.myAuto.clientInfo[0]['Tanker'] = self.ui.cb_tanker_1.currentText()
+                self.myAuto.clientInfo[0]['supporter'] = self.ui.cb_support_1.currentText()
+
+        if btnName == "pb_client_2":    #   2번클라이언트 핸들 지정하기
+            if self.myAuto.clientInfo[1]['Handle']:
+                self.ui.le_handle_2.setText(str(self.myAuto.clientInfo[1]['Handle']))
+                self.ui.le_handle_2.setText(str(self.myAuto.clientInfo[1]['Handle']))
+                self.myAuto.clientInfo[1]['Attacker'] = self.ui.cb_attacker_2.currentText()
+                self.myAuto.clientInfo[1]['Tanker'] = self.ui.cb_tanker_2.currentText()
+                self.myAuto.clientInfo[1]['supporter'] = self.ui.cb_support_2.currentText()
+
+        if btnName == "pb_client_3":    #   3번클라이언트 핸들 지정하기
+            if self.myAuto.clientInfo[2]['Handle']:
+                self.ui.le_handle_3.setText(str(self.myAuto.clientInfo[2]['Handle']))
+                self.ui.le_handle_3.setText(str(self.myAuto.clientInfo[2]['Handle']))
+                self.myAuto.clientInfo[2]['Attacker'] = self.ui.cb_attacker_3.currentText()
+                self.myAuto.clientInfo[2]['Tanker'] = self.ui.cb_tanker_3.currentText()
+                self.myAuto.clientInfo[2]['supporter'] = self.ui.cb_support_3.currentText()
+
+    @pyqtSlot(int, list)
+    def gameInfoLog(self, idx, Info):
+
+        for x in range(0, idx):
+            status = {0: '대기중', 1: '전투중'}
+            if x == 0:
+                self.ui.le_status_1.setText(status[Info[0].Status])
+                self.ui.le_battleCount_1.setText(str(Info[0].BattleTotalCount))
+                self.ui.le_snackCount_1.setText(str(Info[0].EatCount))
+            if x == 1:
+                self.ui.le_status_2.setText(status[Info[x].Status])
+                self.ui.le_battleCount_2.setText(str(Info[x].BattleTotalCount))
+                self.ui.le_snackCount_2.setText(str(Info[x].EatCount))
+            if x == 2:
+                self.ui.le_status_3.setText(status[Info[x].Status])
+                self.ui.le_battleCount_3.setText(str(Info[x].BattleTotalCount))
+                self.ui.le_snackCount_3.setText(str(Info[x].EatCount))
+
+
 
     @pyqtSlot(str)
     def sendCommand(self, tx):
         self.mySerial.txData(tx)
 
 
-    @pyqtSlot(str)
-    def autoLog(self, log):
-        if (len(self.ui.te_log.toPlainText())) > 60000:  # Rx Fail history log가 x만줄 이상이면
-            self.ui.te_log.clear()  # ASCII tx 로그 초기화
+    @pyqtSlot(int, str)
+    def autoLog(self, ch, log):
+        if ch == 0: #   1번 클라이언트
+            if (len(self.ui.te_clientLog_1.toPlainText())) > 60000:  # history log가 x만줄 이상이면
+                self.ui.te_clientLog_1.clear()  # ASCII tx 로그 초기화
 
-        self.ui.te_log.append(log)
-        pass
+            self.ui.te_clientLog_1.append(log)
+
+        if ch == 1: #   2번 클라이언트
+            if (len(self.ui.te_clientLog_2.toPlainText())) > 60000:  #  log가 x만줄 이상이면
+                self.ui.te_clientLog_2.clear()  # ASCII tx 로그 초기화
+
+            self.ui.te_clientLog_2.append(log)
+
+        if ch == 2: #   3번 클라이언트
+            if (len(self.ui.te_clientLog_3.toPlainText())) > 60000:  # history log가 x만줄 이상이면
+                self.ui.te_clientLog_3.clear()  # ASCII tx 로그 초기화
+
+            self.ui.te_clientLog_3.append(log)
 
     def serialLog(self, evtSerialLog):  #   시리얼 통신 로그
         splitString = evtSerialLog.split(',')
-        print(evtSerialLog)
 
         if splitString[0] == '$MOUSE':
             pass

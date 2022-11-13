@@ -50,7 +50,7 @@ class myOpenCV(QThread):
         result = cv2.matchTemplate(image_gray, template, cv2.TM_CCOEFF_NORMED)
 
         # 임계치로 찾는법
-        threshold = 0.8 # 임계치 설정
+        threshold = 0.9 # 임계치 설정
         box_loc = np.where(result >= threshold) # 임계치 이상의 값들만 사용
 
         for box in zip(*box_loc[::-1]):     #   이미지 비교 일치한 데이터 빨간 사각형 테두리 전부 그리기
