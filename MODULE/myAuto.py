@@ -98,7 +98,7 @@ class myAuto(QThread):
     def set_foreground(self, handle):       #   프로그램 최상단으로
         """put the window in the foreground"""
         pyautogui.press("alt")
-        time.sleep(0.5)
+        time.sleep(0.3)
         win32gui.SetForegroundWindow(handle)
 
     def searchBattleMap(self):      # 전투 맵 이미지
@@ -116,7 +116,7 @@ class myAuto(QThread):
 
             elif self.gameInfo[i].Status == 1:      #   전투 대기 상태
                 captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
-                self.BattleWaitAct(i, captureImg)
+                self.BattleAct(i, captureImg)
 
     def homeAct(self, idx, captureImg):  #   Home화면에서 행동
         pos = self.clientInfo[idx]['ProgramPosition']
@@ -136,22 +136,16 @@ class myAuto(QThread):
         else:
             if creditPos:  # 정상적인 홈화면
                 if self.gameInfo[idx].BattleCount > 4:    #   4번째 전투마다 삼색채 먹기
-                    if snackPos: #   삼색채 이미지 발견시
-                        for repeat in range(0,4):   #   3번반복
-                            self.returnCommand(idx, self.Mousecode(2, snackPos, 0), 0, "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
-                            time.sleep(0.1)
-                            self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
-                        self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
-                    self.gameInfo[idx].BattleCount = 0
-
+                    self.snackEat(idx, snackPos)        #   삼색채 먹기
         self.gameInfo[idx].Status = self.gameInfo[idx].Status + 1
 
-    def BattleWaitAct(self, idx, captureImg):  #   전투 대기 상태
+    def BattleAct(self, idx, captureImg):  #   전투 대기 상태
         pos = self.clientInfo[idx]['ProgramPosition']
         mapePos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\WARNING\mape.bmp')  # 암행 어사 발견 이미지 좌표
         warningCheckPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\WARNING\check.bmp')  # 확인 이미지 좌표
         battleEnterPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\BATTLE\battleEnter.bmp')  # 전투 진입 확인 이미지 좌표
         creditPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 신용등급 좌표 -- 홈화면 확인 이미지
+        snackPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\snack.bmp')  # 삼색채 좌표
 
         if creditPos and self.gameInfo[idx].Battle == 1:  # 신용등급 이미지 이미지 발견시
             self.returnCommand(idx, 0, 0, "전투 종료")  # 신용등급 이미지 확인
@@ -160,8 +154,9 @@ class myAuto(QThread):
             self.gameInfo[idx].Battle = 0
             self.gameInfo[idx].BattleCount = self.gameInfo[idx].BattleCount + 1
             self.gameInfo[idx].BattleTotalCount = self.gameInfo[idx].BattleTotalCount + 1
+            self.snackEat(idx, snackPos)    #   삼색채 먹기
 
-        if battleEnterPos and self.gameInfo[idx].Battle == 0:    #   전투 진입 이미지 발견시
+        elif battleEnterPos and self.gameInfo[idx].Battle == 0:    #   전투 진입 이미지 발견시
 
             skill = '11'  # 1번 케릭터로 이동 및 마우스 센터로 옮기기
             self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), self.KeyboardCode(0, skill), "1번부대 화면 및 마우스 중앙으로 이동")  # 1번부대 화면 및 마우스 중앙으로 이동
@@ -179,6 +174,7 @@ class myAuto(QThread):
             self.gameInfo[idx].Battle = 1
 
         elif self.gameInfo[idx].Battle:
+            #self.gameInfo[idx].Battle = self.gameInfo[idx].Battle + 1
             skill = '11e2e3e4e'  # 1번 케릭터로 이동 및 마우스 센터로 옮기기
             self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), self.KeyboardCode(0, skill), "1번부대 화면 스킬 반복 시전")  # 1번부대 화면 스킬 반복시전
 
@@ -191,15 +187,29 @@ class myAuto(QThread):
         #     self.returnCommand(idx, self.Mousecode(1, warningCheckPos, 0), 0, "경고창 발견")  # 확인창 이미지로 이동 후 클릭
         #     self.gameInfo[idx].WarningCount = self.gameInfo[idx].WarningCount + 1
 
+    def BattleWait(self, idx, captureImg):  # 전투 대기 상태
+        pass
+
+    def snackEat(self, idx, snackPos): #   삼색채 먹기
+        if self.gameInfo[idx].BattleCount > 5:  # 4번째 전투마다 삼색채 먹기
+            if snackPos:  # 삼색채 이미지 발견시
+                for repeat in range(0, 4):  # 4번반복
+                    self.returnCommand(idx, self.Mousecode(2, snackPos, 0), 0, "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
+                    time.sleep(0.1)
+                    self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
+                self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
+            self.gameInfo[idx].BattleCount = 0
+        pass
+
     def returnCommand(self, idx, mouse, key, log):        #   시리얼통신으로 전달할 커맨드
         self.autoLog.emit(idx, log)
         if mouse:
             tx = self.CtrlAddCheckSum("$MOUSE,{0},{1},{2},{3},*".format(mouse[0], int((mouse[1] - pyautogui.position().x)), int((mouse[2] - pyautogui.position().y)), mouse[3]))
             self.autoSendReport.emit(tx)      #   마우스 제어 프로토콜 전송
-            time.sleep(0.5)  # 대기시간
+            time.sleep(0.3)  # 대기시간
         if key:
             self.autoSendReport.emit(key)    #   키보드 제어 프로토콜 전송
-            time.sleep(0.5)  # 대기시간
+            time.sleep(0.3)  # 대기시간
         time.sleep(0.2)
 
     def Mousecode(self, clcik, pos, wheel):

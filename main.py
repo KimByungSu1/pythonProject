@@ -91,7 +91,7 @@ class MainWindow(QMainWindow):
         #         self.ui.cb_baudRate.setCurrentIndex(4)      #   콤보박스 시작시 115200으로 시작하기
 
         if self.ui.cb_battleMapList.currentText() == '흑룡담':
-            self.myAuto.battlePath = r'C:\Users\BSK\PycharmProjects\pythonProject\IMAGE\BATTLE\BLACK_DRAGON_MAP'
+            self.myAuto.battlePath = r'.\IMAGE\BATTLE\BLACK_DRAGON_MAP'
 
 
         # BUTTONS
@@ -153,7 +153,7 @@ class MainWindow(QMainWindow):
     def gameInfoLog(self, idx, Info):
 
         for x in range(0, idx):
-            status = {0: '대기중', 1: '전투중'}
+            status = {0: '대기중', 1: '전투대기중', 2:'전투중'}
             if x == 0:
                 self.ui.le_status_1.setText(status[Info[0].Status])
                 self.ui.le_battleCount_1.setText(str(Info[0].BattleTotalCount))
