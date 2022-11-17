@@ -26,6 +26,7 @@ class gameInfoStruct():
     DeathCount = 0  # 죽은 횟수
     EatCount = 0  # 포만감 섭취 횟수
     TimeOutCount = 0    #   Time Out 시 다음 상태로 변경
+    ChickenCount = 0  # 삼계탕 섭취 횟수
     Battle = 0
 
 
@@ -41,6 +42,7 @@ class myAuto(QThread):
         self.searchProgramHandle = []  # 프로그램 핸들
         self.HandleCount = 0  # 프로그램 갯수
         self.searchImg = myOpenCV()  # 이미지 처리 하기위한 객채 생성
+        self.searchImg.start()
         self.battlePath = ''        #   사냥터 이미지 인식 폴더
         self.battleMapSearchPos = 0
         self.isInitOk = 0
@@ -129,37 +131,41 @@ class myAuto(QThread):
 
     def homeAct(self, idx, captureImg):  #   Home화면에서 행동
         pos = self.clientInfo[idx]['ProgramPosition']
-
-        deathPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\death.bmp')  # 사망 경고창 좌표
-        chickenPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\chicken.bmp')  # 삼계탕 좌표
         snackPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\snack.bmp')  # 삼색채 좌표
         creditPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 신용등급 좌표 -- 홈화면 확인 이미지
+        deathPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\death.bmp')  # 사망 경고창 좌표
+        chickenPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\chicken.bmp')  # 삼계탕 좌표
         checkPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\check.bmp')  # 확인버튼 좌표
 
         if deathPos:    #   사망 경고창 발견시
             self.returnCommand(idx, self.Mousecode(1, checkPos, 0), 0, "불사신부 사용")    #   불사신부 사용한다는 기준, 확인 버튼 으로 이동 후 클릭
             self.gameInfo[idx].DeathCount = self.gameInfo[idx].DeathCount + 1            #   사망카운트 증가
+            time.sleep(3.0)
             if chickenPos:  # 삼계탕 이미지 발견시
                 self.returnCommand(idx, self.Mousecode(2, chickenPos, 0), 0, "삼계탕 사용")  # 삼계탕 사용
-            self.gameInfo[idx].BattleCount = 0
-        else:
-            if creditPos:  # 정상적인 홈화면
-                if self.gameInfo[idx].BattleCount > 4:    #   4번째 전투마다 삼색채 먹기
-                    self.snackEat(idx, snackPos)        #   삼색채 먹기
+                time.sleep(1.0)
+                self.gameInfo[idx].ChickenCount = self.gameInfo[idx].ChickenCount + 1   #   삼계탕 사용 카운트 증가
+                self.gameInfo[idx].BattleCount = 0 #    삼계탕 사용시 포만감 채워지므로 포만감 섭취 카운트 초기화
 
-        if True:
+        if self.deathHero:
             for deathHero in self.searhDeathHero():       #   죽은 용병 찾기
                 deathHeroPos = self.searchImg.trueSearchImage(pos, captureImg, deathHero)  # 전투맵 이미지 경로 저장
-                if deathHeroPos and self.deathHero:  # 죽은용병 확인시
+                if deathHeroPos:  # 죽은용병 확인시
                     if chickenPos:  # 삼계탕 이미지 발견시
                         self.returnCommand(idx, self.Mousecode(2, chickenPos, 0), 0, "삼계탕 사용")  # 삼계탕 사용
-                        self.gameInfo[idx].BattleCount = 0
+                        time.sleep(1.0)
+                        self.gameInfo[idx].BattleCount = 0  #    삼계탕 사용시 포만감 채워지므로 포만감 섭취 카운트 초기화
+
+        if creditPos:  # 정상적인 홈화면
+            if self.gameInfo[idx].BattleCount > 4:  # 5번째 전투마다 삼색채 먹기
+                self.snackEat(idx, snackPos)  # 삼색채 먹기
 
         self.gameInfo[idx].Status = self.gameInfo[idx].Status + 1
 
     def BattleAct(self, idx, captureImg):  #   전투 대기 상태
         pos = self.clientInfo[idx]['ProgramPosition']
         mapePos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\WARNING\mape.bmp')  # 암행 어사 발견 이미지 좌표
+        mapePos1 = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\WARNING\mape_1.bmp')  # 암행 어사 발견 이미지 좌표
         warningCheckPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\WARNING\check.bmp')  # 확인 이미지 좌표
         battleEnterPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\BATTLE\battleEnter.bmp')  # 전투 진입 확인 이미지 좌표
         creditPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 신용등급 좌표 -- 홈화면 확인 이미지
@@ -192,7 +198,6 @@ class myAuto(QThread):
             self.gameInfo[idx].Battle = 1
 
         elif self.gameInfo[idx].Battle:
-            #self.gameInfo[idx].Battle = self.gameInfo[idx].Battle + 1
             skill = '11e2e3e4e'  # 1번 케릭터로 이동 및 마우스 센터로 옮기기
             self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), self.KeyboardCode(0, skill), "1번부대 화면 스킬 반복 시전")  # 1번부대 화면 스킬 반복시전
 
@@ -201,8 +206,16 @@ class myAuto(QThread):
             self.gameInfo[idx].MapeCount = self.gameInfo[idx].MapeCount + 1
             time.sleep(20)              #   마패 찾을시간
 
+        elif mapePos1:    #   암행어사 이미지 발견시
+            self.returnCommand(idx, self.Mousecode(0, mapePos1, 0), 0, "암행 어사 발견")  # 암행 어사 발견
+            self.gameInfo[idx].MapeCount = self.gameInfo[idx].MapeCount + 1
+            time.sleep(20)              #   마패 찾을시간
+
         elif warningCheckPos:    #   기타 경고 이미지 발견시
             self.returnCommand(idx, self.Mousecode(1, warningCheckPos, 0), 0, "경고창 발견")  # 확인창 이미지로 이동 후 클릭
+            time.sleep(1.0)
+            self.returnCommand(idx, self.Mousecode(1, self.centerPos, 0), 0, "경고창 확인 클릭 후 센터이동")  # 확인창 클릭 후 센터 이동
+            time.sleep(1.0)
             self.gameInfo[idx].WarningCount = self.gameInfo[idx].WarningCount + 1
 
     def BattleWait(self, idx, captureImg):  # 전투 대기 상태
@@ -216,6 +229,7 @@ class myAuto(QThread):
                     time.sleep(0.1)
                     self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
                 self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
+                time.sleep(0.1)
             self.gameInfo[idx].BattleCount = 0
 
     def returnCommand(self, idx, mouse, key, log):        #   시리얼통신으로 전달할 커맨드
@@ -227,7 +241,7 @@ class myAuto(QThread):
         if key:
             self.autoSendReport.emit(key)    #   키보드 제어 프로토콜 전송
             time.sleep(0.3)  # 대기시간
-        time.sleep(0.2)
+        time.sleep(0.1)
 
     def Mousecode(self, clcik, pos, wheel):
         hidSend = []

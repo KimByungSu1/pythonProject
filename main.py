@@ -96,6 +96,7 @@ class MainWindow(QMainWindow):
 
         # BUTTONS
         self.ui.pb_start.clicked.connect(self.buttonClick)
+        self.ui.pb_restart.clicked.connect(self.buttonClick)
         self.ui.pb_client_1.clicked.connect(self.buttonClick)
         self.ui.pb_client_2.clicked.connect(self.buttonClick)
         self.ui.pb_client_3.clicked.connect(self.buttonClick)
@@ -112,18 +113,22 @@ class MainWindow(QMainWindow):
         self.ui.le_posX.setText(str(pyautogui.position().x))
         self.ui.le_posY.setText(str(pyautogui.position().y))
 
-        if self.ui.chkb_jamsu_1.isChecked():
+        if self.ui.chkb_jamsu.isChecked():
             self.myAuto.jamsu = 1
 
-        if self.ui.chkb_jamsu_2.isChecked():
-            self.deathHero = 1
-
-
+        if self.ui.chkb_deathHero.isChecked():
+            self.myAuto.deathHero = 1
 
     def buttonClick(self):
         # GET BUTTON CLICKED
         btn = self.sender()
         btnName = btn.objectName()
+        
+        if btnName == "pb_restart":     #   프로그램 재시작
+            QtCore.QCoreApplication.quit()
+            status = QtCore.QProcess.startDetached(sys.executable, sys.argv)
+            print(status)
+            
         if btnName == "pb_start":
             if self.mySerial.serialOpen(self.ui.cb_comport.currentText(), 115200) == True:  # 시리얼 오픈
                 self.mySerial.start()  # 쓰레드 시작
@@ -174,12 +179,9 @@ class MainWindow(QMainWindow):
                 self.ui.le_battleCount_3.setText(str(Info[x].BattleTotalCount))
                 self.ui.le_snackCount_3.setText(str(Info[x].EatCount))
 
-
-
     @pyqtSlot(str)
     def sendCommand(self, tx):
         self.mySerial.txData(tx)
-
 
     @pyqtSlot(int, str)
     def autoLog(self, ch, log):

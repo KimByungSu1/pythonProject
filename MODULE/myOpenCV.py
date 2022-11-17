@@ -17,30 +17,85 @@ ImageGrab.grab = partial(ImageGrab.grab, all_screens=True)
 class myOpenCV(QThread):
     def __init__(self):
         QThread.__init__(self)
-        #self.testCvtImg()
-        pass
+        self.window_name = "Gersang"        #   1024, 768 사이즈
 
-    def getProgramPos(self, handle):      # 프로그램 좌표 확인
+        hwnd = win32gui.FindWindow(None, self.window_name)
+        if not hwnd:
+            raise Exception('Window not found: ' + self.window_name)
+
+        self.handle = hwnd
+        self.ratio = 0.95 #  프로그램 크기 비율
+
+    def getProgramPos(self, handle):      # 프로그램 원본
         left, top, right, bot = win32gui.GetClientRect(handle)
         x, y = win32gui.ClientToScreen(handle, (left, top))
-        return x, y, right, bot
+        pos = x, y, right, bot
+        return pos
 
-    def screenCapture(self, pos):
+    def getProgramCenterPos(self, handle):      # 프로그램 일정비율로 캡쳐
+        left, top, right, bot = win32gui.GetClientRect(handle)
+        x, y = win32gui.ClientToScreen(handle, (left, top))
+        resizeX = x + (right - int(right*self.ratio))
+        resizeY = y + (bot - int(bot*self.ratio))
+        resizeRight = right - (right - int(right*self.ratio))
+        resizeBot = bot - (bot - int(bot*self.ratio))
+
+        pos = resizeX, resizeY, resizeRight, resizeBot
+        print(pos)
+        return pos
+
+    def getleftTopPos(self, handle):      # 왼쪽 상단
+        left, top, right, bot = win32gui.GetClientRect(handle)
+        x, y = win32gui.ClientToScreen(handle, (left, top))
+
+        resizeRight = int(right/2)
+        resizeBot = int(bot/2)
+        pos = x, y, resizeRight, resizeBot
+        return pos
+
+    def getleftDownPos(self, handle):      # 왼쪽 하단
+        left, top, right, bot = win32gui.GetClientRect(handle)
+        x, y = win32gui.ClientToScreen(handle, (left, top))
+
+        resizeRight = int(right/2)
+        resizeY = y + int(bot/2)
+        resizeBot = int(bot / 2)
+        pos = x, resizeY, resizeRight, resizeBot
+        return pos
+    
+    def getRightTopPos(self, handle):      # 오른쪽 상단
+        left, top, right, bot = win32gui.GetClientRect(handle)
+        x, y = win32gui.ClientToScreen(handle, (left, top))
+        resizeX = x + int(right/2)
+        resizeY = y
+        resizeRight = int(right/2)
+        resizeBot = int(bot/2)
+        pos = resizeX, resizeY, resizeRight, resizeBot
+        return pos
+
+    def getRightDownPos(self, handle):      # 오른쪽 하단
+        left, top, right, bot = win32gui.GetClientRect(handle)
+        x, y = win32gui.ClientToScreen(handle, (left, top))
+        resizeX = x + int(right/2)
+        resizeY = y + int(bot/2)
+        resizeRight = int(right/2)
+        resizeBot = int(bot/2)
+        pos = resizeX, resizeY, resizeRight, resizeBot
+        return pos
+    
+    def screenCapture(self, pos):      
         return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=pos)), cv2.COLOR_RGB2BGR)
 
     def captureImgAndShow(self, pos):
         cv2.imshow("captureImg", cv2.cvtColor(np.asarray(pyautogui.screenshot(region=pos)), cv2.COLOR_RGB2BGR))
         key = cv2.waitKey()
 
-
-    def set_foreground(self, handle):
-        """put the window in the foreground"""
-        pyautogui.press("alt")
-        win32gui.SetForegroundWindow(handle)
-
     def run(self):
         while True:
-            pass
+            frame = self.screenCapture(self.getProgramCenterPos(self.handle))
+            cv2.imshow("frame1", frame)
+            key = cv2.waitKey(1)
+
 
     def searchImage(self, pos, img_src, img_template):
         image = img_src
