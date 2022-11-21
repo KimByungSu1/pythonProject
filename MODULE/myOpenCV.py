@@ -37,8 +37,11 @@ class myOpenCV(QThread):
         x, y = win32gui.ClientToScreen(handle, (left, top))
         resizeX = x + (right - int(right*self.ratio))
         resizeY = y + (bot - int(bot*self.ratio))
-        resizeRight = right - (right - int(right*self.ratio))
-        resizeBot = bot - (bot - int(bot*self.ratio))
+
+        rightRatio = right - int(right*self.ratio)
+        botRatio = bot - int(bot*self.ratio)
+        resizeRight = right - rightRatio*2
+        resizeBot = bot - botRatio*2
 
         pos = resizeX, resizeY, resizeRight, resizeBot
         print(pos)
@@ -59,7 +62,7 @@ class myOpenCV(QThread):
 
         resizeRight = int(right/2)
         resizeY = y + int(bot/2)
-        resizeBot = int(bot / 2)
+        resizeBot = int(bot/2)
         pos = x, resizeY, resizeRight, resizeBot
         return pos
     

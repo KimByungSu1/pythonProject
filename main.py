@@ -127,8 +127,7 @@ class MainWindow(QMainWindow):
         if btnName == "pb_restart":     #   프로그램 재시작
             QtCore.QCoreApplication.quit()
             status = QtCore.QProcess.startDetached(sys.executable, sys.argv)
-            print(status)
-            
+
         if btnName == "pb_start":
             if self.mySerial.serialOpen(self.ui.cb_comport.currentText(), 115200) == True:  # 시리얼 오픈
                 self.mySerial.start()  # 쓰레드 시작
@@ -165,11 +164,11 @@ class MainWindow(QMainWindow):
     def gameInfoLog(self, idx, Info):
 
         for x in range(0, idx):
-            status = {0: '대기중', 1: '전투대기중', 2:'전투중'}
+            status = {0: '대기중', 1: '전투대기중', 2: '전투중'}
             if x == 0:
-                self.ui.le_status_1.setText(status[Info[0].Status])
-                self.ui.le_battleCount_1.setText(str(Info[0].BattleTotalCount))
-                self.ui.le_snackCount_1.setText(str(Info[0].EatCount))
+                self.ui.le_status_1.setText(status[Info[x].Status])
+                self.ui.le_battleCount_1.setText(str(Info[x].BattleTotalCount))
+                self.ui.le_snackCount_1.setText(str(Info[x].EatCount))
             if x == 1:
                 self.ui.le_status_2.setText(status[Info[x].Status])
                 self.ui.le_battleCount_2.setText(str(Info[x].BattleTotalCount))

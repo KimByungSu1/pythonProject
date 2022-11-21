@@ -361,30 +361,10 @@
        <string>공통 설정</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="3" column="4">
-        <widget class="QLineEdit" name="le_posX"/>
-       </item>
-       <item row="2" column="4">
-        <widget class="QLineEdit" name="le_monitorPos">
+       <item row="2" column="6">
+        <widget class="QLineEdit" name="le_Accuracy">
          <property name="text">
-          <string>0</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QLabel" name="label">
-         <property name="text">
-          <string>Pos X</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="cb_comport"/>
-       </item>
-       <item row="4" column="4">
-        <widget class="QCheckBox" name="chkb_deathHero">
-         <property name="text">
-          <string>용병 사망시 삼계탕</string>
+          <string>0.9</string>
          </property>
         </widget>
        </item>
@@ -395,27 +375,10 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="6">
-        <widget class="QLineEdit" name="le_posY"/>
-       </item>
-       <item row="2" column="6">
-        <widget class="QLineEdit" name="le_Accuracy">
-         <property name="text">
-          <string>0.9</string>
-         </property>
-        </widget>
-       </item>
        <item row="3" column="5">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>Pos Y</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="4">
-        <widget class="QPushButton" name="pb_start">
-         <property name="text">
-          <string>시작(F10)</string>
          </property>
         </widget>
        </item>
@@ -424,21 +387,13 @@
          <property name="text">
           <string>잠수팅 방지</string>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Abs Pos</string>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>전투</string>
-         </property>
-        </widget>
+       <item row="3" column="4">
+        <widget class="QLineEdit" name="le_posX"/>
        </item>
        <item row="1" column="4">
         <widget class="QComboBox" name="cb_battleMapList">
@@ -449,10 +404,75 @@
          </item>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="cb_comport"/>
+       </item>
+       <item row="4" column="4">
+        <widget class="QCheckBox" name="chkb_deathHero">
+         <property name="text">
+          <string>용병 사망시 삼계탕</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Abs Pos</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>Pos X</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>전투</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="6">
+        <widget class="QLineEdit" name="le_posY"/>
+       </item>
+       <item row="0" column="4">
+        <widget class="QPushButton" name="pb_start">
+         <property name="text">
+          <string>시작(F10)</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="5">
         <widget class="QPushButton" name="pb_restart">
          <property name="text">
           <string>재시작</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="4">
+        <widget class="QLineEdit" name="le_monitorPos">
+         <property name="text">
+          <string>0</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="5">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>잠수시간</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="6">
+        <widget class="QLineEdit" name="le_Jamsu">
+         <property name="text">
+          <string>0</string>
          </property>
         </widget>
        </item>

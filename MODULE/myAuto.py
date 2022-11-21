@@ -42,7 +42,7 @@ class myAuto(QThread):
         self.searchProgramHandle = []  # 프로그램 핸들
         self.HandleCount = 0  # 프로그램 갯수
         self.searchImg = myOpenCV()  # 이미지 처리 하기위한 객채 생성
-        self.searchImg.start()
+        #self.searchImg.start()
         self.battlePath = ''        #   사냥터 이미지 인식 폴더
         self.battleMapSearchPos = 0
         self.isInitOk = 0
@@ -52,19 +52,22 @@ class myAuto(QThread):
         self.initAuto()
         self.jamsu = 0  #   잠수팅 방지
         self.deathHero = 0  # 죽은용병 살리기
+        self.jamsuCount = 0
 
         self.timer = QTimer()
         self.timer.start(1000)  #   1초마다
         self.timer.timeout.connect(self.timer1Sec)
 
     def stop(self):
-
         self.isAuto = False
 
     def timer1Sec(self):
         if self.isAuto:
             self.gameInfoLog.emit(self.HandleCount, self.gameInfo)
-        pass
+
+            if self.jamsu:          #   30분 사냥터 팅방지
+                self.jamsuCount = self.jamsuCount + 1       #   20분 이상 되면 잠수 방지 매클 동작
+
 
 
     def run(self):
@@ -102,8 +105,8 @@ class myAuto(QThread):
     def set_foreground(self, handle):       #   프로그램 최상단으로
         """put the window in the foreground"""
         pyautogui.press("alt")
-        time.sleep(0.3)
         win32gui.SetForegroundWindow(handle)
+        time.sleep(0.3)
 
     def searhDeathHero(self):      # 사망한 용병 찾기
         deathPath = r'.\IMAGE\DEATH/*.bmp'
@@ -117,17 +120,20 @@ class myAuto(QThread):
         for i in range(0, self.HandleCount):
             self.set_foreground(self.clientInfo[i]['Handle'])  # 이미지 서치할 클라이언트 최상단
             pos = self.clientInfo[i]['ProgramPosition']
+            # captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
+            # cv2.imshow("frame1", captureImg)
+            # key = cv2.waitKey(1)
+            if self.jamsuCount > 1700:
+                self.returnCommand(i, 0, 0, "사냥터 팅방지 매크로 동작 {0}".format(self.jamsuCount))  # 사냥터 팅방지 매크로 동작
+                self.EnterFunc()    #   잠수방지 매크로 동작
 
-            if self.jamsu:
-                self.EnterFunc()
-            else:
-                if self.gameInfo[i].Status == 0:      # Home화면에서 행동
-                    captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
-                    self.homeAct(i, captureImg)
+            if self.gameInfo[i].Status == 0:      # Home화면에서 행동
+                captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
+                self.homeAct(i, captureImg)
 
-                elif self.gameInfo[i].Status == 1:      #   전투 대기 상태
-                    captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
-                    self.BattleAct(i, captureImg)
+            elif self.gameInfo[i].Status == 1:      #   전투 대기 상태
+                captureImg = self.searchImg.screenCapture(pos)  # 현재 화면 캡쳐
+                self.BattleAct(i, captureImg)
 
     def homeAct(self, idx, captureImg):  #   Home화면에서 행동
         pos = self.clientInfo[idx]['ProgramPosition']
@@ -139,22 +145,20 @@ class myAuto(QThread):
 
         if deathPos:    #   사망 경고창 발견시
             self.returnCommand(idx, self.Mousecode(1, checkPos, 0), 0, "불사신부 사용")    #   불사신부 사용한다는 기준, 확인 버튼 으로 이동 후 클릭
+            time.sleep(1)
             self.gameInfo[idx].DeathCount = self.gameInfo[idx].DeathCount + 1            #   사망카운트 증가
-            time.sleep(3.0)
-            if chickenPos:  # 삼계탕 이미지 발견시
-                self.returnCommand(idx, self.Mousecode(2, chickenPos, 0), 0, "삼계탕 사용")  # 삼계탕 사용
-                time.sleep(1.0)
-                self.gameInfo[idx].ChickenCount = self.gameInfo[idx].ChickenCount + 1   #   삼계탕 사용 카운트 증가
-                self.gameInfo[idx].BattleCount = 0 #    삼계탕 사용시 포만감 채워지므로 포만감 섭취 카운트 초기화
+            self.returnCommand(idx, 0, self.KeyboardCode(0x04, "1111"), "삼계탕 사용")  # 삼계탕 사용
+            time.sleep(1)
+            self.gameInfo[idx].ChickenCount = self.gameInfo[idx].ChickenCount + 1   #   삼계탕 사용 카운트 증가
+            self.gameInfo[idx].BattleCount = 0 #    삼계탕 사용시 포만감 채워지므로 포만감 섭취 카운트 초기화
 
-        if self.deathHero:
-            for deathHero in self.searhDeathHero():       #   죽은 용병 찾기
-                deathHeroPos = self.searchImg.trueSearchImage(pos, captureImg, deathHero)  # 전투맵 이미지 경로 저장
-                if deathHeroPos:  # 죽은용병 확인시
-                    if chickenPos:  # 삼계탕 이미지 발견시
-                        self.returnCommand(idx, self.Mousecode(2, chickenPos, 0), 0, "삼계탕 사용")  # 삼계탕 사용
-                        time.sleep(1.0)
-                        self.gameInfo[idx].BattleCount = 0  #    삼계탕 사용시 포만감 채워지므로 포만감 섭취 카운트 초기화
+        # if self.deathHero:
+        #     for deathHero in self.searhDeathHero():       #   죽은 용병 찾기
+        #         deathHeroPos = self.searchImg.trueSearchImage(pos, captureImg, deathHero)  # 전투맵 이미지 경로 저장
+        #         if deathHeroPos:  # 죽은용병 확인시
+        #             if chickenPos:  # 삼계탕 이미지 발견시
+        #                 self.returnCommand(idx, self.Mousecode(2, chickenPos, 0), 0, "삼계탕 사용")  # 삼계탕 사용
+        #                 self.gameInfo[idx].BattleCount = 0  #    삼계탕 사용시 포만감 채워지므로 포만감 섭취 카운트 초기화
 
         if creditPos:  # 정상적인 홈화면
             if self.gameInfo[idx].BattleCount > 4:  # 5번째 전투마다 삼색채 먹기
@@ -170,6 +174,7 @@ class myAuto(QThread):
         battleEnterPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\BATTLE\battleEnter.bmp')  # 전투 진입 확인 이미지 좌표
         creditPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 신용등급 좌표 -- 홈화면 확인 이미지
         snackPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\snack.bmp')  # 삼색채 좌표
+        bottlePos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\WARNING\bottle.bmp')  # 바닥에 십전대보탕 이미지 확인시
 
         if creditPos and self.gameInfo[idx].Battle == 1:  # 신용등급 이미지 이미지 발견시
             self.returnCommand(idx, 0, 0, "전투 종료")  # 신용등급 이미지 확인
@@ -181,9 +186,9 @@ class myAuto(QThread):
             self.snackEat(idx, snackPos)    #   삼색채 먹기
 
         elif battleEnterPos and self.gameInfo[idx].Battle == 0:    #   전투 진입 이미지 발견시
+            self.jamsuCount = 0
 
-            skill = '11'  # 1번 케릭터로 이동 및 마우스 센터로 옮기기
-            self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), self.KeyboardCode(0, skill), "1번부대 화면 및 마우스 중앙으로 이동")  # 1번부대 화면 및 마우스 중앙으로 이동
+            self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "1번부대 화면 및 마우스 중앙으로 이동")  # 1번부대 화면 및 마우스 중앙으로 이동
 
             skill = '1e2e3e4e'  # 전투맵 이미지 발견시 스킬 예약
             if self.battleMapSearchPos:         #   다른 클라이언트에서 찾은 이미지 좌표가 있다면
@@ -213,10 +218,20 @@ class myAuto(QThread):
 
         elif warningCheckPos:    #   기타 경고 이미지 발견시
             self.returnCommand(idx, self.Mousecode(1, warningCheckPos, 0), 0, "경고창 발견")  # 확인창 이미지로 이동 후 클릭
-            time.sleep(1.0)
-            self.returnCommand(idx, self.Mousecode(1, self.centerPos, 0), 0, "경고창 확인 클릭 후 센터이동")  # 확인창 클릭 후 센터 이동
-            time.sleep(1.0)
+            self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "경고창 확인 클릭 후 센터이동")  # 확인창 클릭 후 센터 이동
             self.gameInfo[idx].WarningCount = self.gameInfo[idx].WarningCount + 1
+            
+        elif bottlePos:    #   바닥에 십전대보탕 이미지 발견시
+            self.returnCommand(idx, 0, self.KeyboardCode(0x04, "1111"), "삼계탕 사용")  # 삼계탕 사용
+            time.sleep(2)  # 초마다 한번씩
+            tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0},*".format("p"))  # 파티말 변경
+            self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+            time.sleep(2)  # 초마다 한번씩
+            tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0}{1}{2},*".format(chr(0x05), idx, chr(0x05)))  # 엔터
+            self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+            time.sleep(5)  # 초마다 한번씩
+            self.gameInfo[idx].BattleCount = 0  #   삼계탕 사용시 배틀카운트 초기화
+
 
     def BattleWait(self, idx, captureImg):  # 전투 대기 상태
         pass
@@ -225,7 +240,7 @@ class myAuto(QThread):
         if self.gameInfo[idx].BattleCount > 5:  # 4번째 전투마다 삼색채 먹기
             if snackPos:  # 삼색채 이미지 발견시
                 for repeat in range(0, 5):  # 5번반복
-                    self.returnCommand(idx, self.Mousecode(2, snackPos, 0), 0, "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
+                    self.returnCommand(idx, 0, self.KeyboardCode(0x04, "22222"), "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
                     time.sleep(0.1)
                     self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
                 self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
@@ -256,13 +271,15 @@ class myAuto(QThread):
         self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
 
     def EnterFunc(self):    #   잠수방지
-        tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0}{1},*".format(chr(0x0A), ",", chr(0x0A))) #   엔터
+        tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0},*".format("p")) #   파티말 변경
+        self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+        time.sleep(30)  #   초마다 한번씩
+        tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0}{1}{2},*".format(chr(0x05), ".", chr(0x05))) #   엔터
         self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
         time.sleep(30)  #   초마다 한번씩
 
-
     def KeyboardCode(self, modifier, key):
-        tx = self.CtrlAddCheckSum("$KEYBOARD,{0},0,{1},*".format(0, key))  #   알트
+        tx = self.CtrlAddCheckSum("$KEYBOARD,{0},0,{1},*".format(modifier, key))  #   알트
         return tx
 
     def CtrlAddCheckSum(self, txStr):
@@ -281,31 +298,3 @@ class myAuto(QThread):
                 CheckSum ^= ord(x)  # 문자를 int(아스키) 변환및 종료문자 발견까지 xor
 
         return False  # '*'종료문자 발견 못할시 False
-
-
-
-        #     skill = '1e2e3e4e'  # 전투맵 이미지 발견시 스킬 예약
-        #     for map in self.searchBattleMap():
-        #         battleMapSearchPos = self.searchImg.searchImage(pos, captureImg, map)  # 전투맵 이미지 경로 저장
-        #         if battleMapSearchPos:  # 전투맵 내부 이미지 인식시
-        #             self.returnCommand(info, self.Mousecode(0, battleMapSearchPos, 0), self.KeyboardCode(0,skill), "발견된 이미지 {0}, 마우스 이동, {1}, {2}".format(map, battleMapSearchPos[0], battleMapSearchPos[1]))  # 전투 진입 이미지 이동
-        #             self.Battle = 1
-        #             break
-        #
-        # if creditPos:  # 신용등급 이미지 이미지 발견시
-        #     self.returnCommand(info, 0, 0, "전투 종료")  # 신용등급 이미지 확인
-        #     info.Status = 0  # Home 화면 전환
-        #     self.Battle = 0
-        #     info.BattleCount = info.BattleCount + 1
-        #     #playsound("Check.mp3")    #   체크 사운드 재생
-        #
-        # elif battleEnterPos and self.Battle == 1:
-        #     if creditPos:  # 신용등급 이미지 이미지 발견시
-        #         self.returnCommand(info, 0, 0, "전투 종료")  # 신용등급 이미지 확인
-        #         info.Status = 0  # Home 화면 전환
-        #         self.Battle = 0
-        #         info.BattleCount = info.BattleCount + 1
-        #         #playsound("Check.mp3")    #   체크 사운드 재생
-        #     else:
-        #         skill = '11e2e3e4e'  # 전투맵 이미지 발견시 스킬 예약
-        #         self.returnCommand(info, self.Mousecode(0, self.centerPos, 0), self.KeyboardCode(0, skill), "이미지 미발견, 1번 부대지정 화면으로 이동")  # 마우스 중앙으로 이동
