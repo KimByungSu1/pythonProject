@@ -273,10 +273,10 @@ class myAuto(QThread):
     def EnterFunc(self):    #   잠수방지
         tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0},*".format("p")) #   파티말 변경
         self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
-        time.sleep(30)  #   초마다 한번씩
+        time.sleep(5)  #   초마다 한번씩
         tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0}{1}{2},*".format(chr(0x05), ".", chr(0x05))) #   엔터
         self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
-        time.sleep(30)  #   초마다 한번씩
+        time.sleep(5)  #   초마다 한번씩
 
     def KeyboardCode(self, modifier, key):
         tx = self.CtrlAddCheckSum("$KEYBOARD,{0},0,{1},*".format(modifier, key))  #   알트
