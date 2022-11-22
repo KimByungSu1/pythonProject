@@ -140,7 +140,6 @@ class myAuto(QThread):
         snackPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\snack.bmp')  # 삼색채 좌표
         creditPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\credit.bmp')  # 신용등급 좌표 -- 홈화면 확인 이미지
         deathPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\death.bmp')  # 사망 경고창 좌표
-        chickenPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\chicken.bmp')  # 삼계탕 좌표
         checkPos = self.searchImg.searchImage(pos, captureImg, r'.\IMAGE\HOME\check.bmp')  # 확인버튼 좌표
 
         if deathPos:    #   사망 경고창 발견시
@@ -187,7 +186,6 @@ class myAuto(QThread):
 
         elif battleEnterPos and self.gameInfo[idx].Battle == 0:    #   전투 진입 이미지 발견시
             self.jamsuCount = 0
-
             self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "1번부대 화면 및 마우스 중앙으로 이동")  # 1번부대 화면 및 마우스 중앙으로 이동
 
             skill = '1e2e3e4e'  # 전투맵 이미지 발견시 스킬 예약
@@ -238,14 +236,21 @@ class myAuto(QThread):
 
     def snackEat(self, idx, snackPos): #   삼색채 먹기
         if self.gameInfo[idx].BattleCount > 5:  # 4번째 전투마다 삼색채 먹기
-            if snackPos:  # 삼색채 이미지 발견시
-                for repeat in range(0, 5):  # 5번반복
-                    self.returnCommand(idx, 0, self.KeyboardCode(0x04, "22222"), "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
-                    time.sleep(0.1)
-                    self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
-                self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
+            tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0},*".format("p"))  # 파티말 변경
+            self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+            time.sleep(0.3)  # 초마다 한번씩
+            tx = self.CtrlAddCheckSum("$KEYBOARD,0,0,{0}{1}{2},*".format(chr(0x05), self.gameInfo[idx].EatCount, chr(0x05)))  # 엔터
+            self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
+            time.sleep(0.3)  # 초마다 한번씩
+
+            for repeat in range(0, 5):  # 5번반복
+                self.returnCommand(idx, 0, self.KeyboardCode(0x04, "22222"), "삼색채 사용")  # 삼색채 이미지 이동 후 우클릭
                 time.sleep(0.1)
+                self.gameInfo[idx].EatCount = self.gameInfo[idx].EatCount + 1
+            self.returnCommand(idx, self.Mousecode(0, self.centerPos, 0), 0, "삼색채 사용 완료, 센터로 마우스 이동")  # 삼색채 완료 후 센터로 마우스이동
+            time.sleep(0.1)
             self.gameInfo[idx].BattleCount = 0
+
 
     def returnCommand(self, idx, mouse, key, log):        #   시리얼통신으로 전달할 커맨드
         self.autoLog.emit(idx, log)
