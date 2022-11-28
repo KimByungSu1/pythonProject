@@ -476,6 +476,16 @@
          </property>
         </widget>
        </item>
+       <item row="4" column="5">
+        <widget class="QCheckBox" name="chkb_telegram">
+         <property name="text">
+          <string>텔레그램 메시지</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>

@@ -1,3 +1,4 @@
+import pytesseract
 import win32api, binascii, datetime
 import win32gui
 import numpy as np
@@ -9,6 +10,7 @@ import pygetwindow as gw
 
 from PIL import ImageGrab
 from functools import partial
+from pytesseract import *
 
 from PyQt5.QtCore import *
 
@@ -24,7 +26,7 @@ class myOpenCV(QThread):
             raise Exception('Window not found: ' + self.window_name)
 
         self.handle = hwnd
-        self.ratio = 0.95 #  프로그램 크기 비율
+        self.ratio = 0.7 #  프로그램 크기 비율
 
     def getProgramPos(self, handle):      # 프로그램 원본
         left, top, right, bot = win32gui.GetClientRect(handle)
@@ -44,7 +46,6 @@ class myOpenCV(QThread):
         resizeBot = bot - botRatio*2
 
         pos = resizeX, resizeY, resizeRight, resizeBot
-        print(pos)
         return pos
 
     def getleftTopPos(self, handle):      # 왼쪽 상단
@@ -89,14 +90,23 @@ class myOpenCV(QThread):
     def screenCapture(self, pos):      
         return cv2.cvtColor(np.asarray(pyautogui.screenshot(region=pos)), cv2.COLOR_RGB2BGR)
 
+    def BgrToRgb(self, src):
+        return cv2.cvtColor(src, cv2.COLOR_BGR2RGB)
+
+    def BgrToGray(self, src):
+        return cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+
     def captureImgAndShow(self, pos):
         cv2.imshow("captureImg", cv2.cvtColor(np.asarray(pyautogui.screenshot(region=pos)), cv2.COLOR_RGB2BGR))
-        key = cv2.waitKey()
+        key = cv2.waitKey(1)
 
     def run(self):
         while True:
-            frame = self.screenCapture(self.getProgramCenterPos(self.handle))
-            cv2.imshow("frame1", frame)
+            frame = self.screenCapture(self.getProgramPos(self.handle))
+            #frame = self.screenCapture(self.getProgramCenterPos(self.handle))
+            cv2.imshow('frame', frame)
+            #text = pytesseract.image_to_string(self.BgrToRgb(frame), config='--psm 6')
+            #print(text)
             key = cv2.waitKey(1)
 
 
@@ -118,23 +128,6 @@ class myOpenCV(QThread):
             searchImagePos = int((startX + endX)/2) + pos[0], int((startY + endY)/2) + pos[1]   #   발견된 이미지 가운데 좌표 가져오기
             return searchImagePos #   이미지 가운데 좌표 리턴, 발견된 이미지 없으면 None 리턴
 
-    def trueSearchImage(self, pos, img_src, img_template):      #   100퍼센트 일치하는 이미지만 찾기
-        image = img_src
-        image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)    #   흑백으로 변환
-        template = cv2.imread(img_template, 0)
-        w, h = template.shape[::-1]
-        result = cv2.matchTemplate(image_gray, template, cv2.TM_CCOEFF_NORMED)
-
-        # 임계치로 찾는법
-        threshold = 0.99 # 임계치 설정
-        box_loc = np.where(result >= threshold) # 임계치 이상의 값들만 사용
-
-        for box in zip(*box_loc[::-1]):     #   이미지 비교 일치한 데이터 빨간 사각형 테두리 전부 그리기
-            startX, startY = box
-            endX, endY = startX + w, startY + h
-            cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)    #   발견된 이미지 빨간 사각형 테두리 그리기
-            searchImagePos = int((startX + endX)/2) + pos[0], int((startY + endY)/2) + pos[1]   #   발견된 이미지 가운데 좌표 가져오기
-            return searchImagePos #   이미지 가운데 좌표 리턴, 발견된 이미지 없으면 None 리턴
 
     def edge_laplacian(self):
         path = glob.glob(r'.\IMAGE\BATTLE\DRAGON\*.bmp')  # 전투 맵 이미지 반복 확인
@@ -167,7 +160,7 @@ class myOpenCV(QThread):
 
     def saveImg(self, Img):
         Time = datetime.datetime.now().strftime('%H:%M:%S')
-        cv2.imwrite('{0}.bmp'.format(Time), Img)
+        cv2.imwrite('{0}.jpg'.format(Time), Img)
 
 
     def testCvtImg(self):
