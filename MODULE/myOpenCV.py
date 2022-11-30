@@ -102,12 +102,37 @@ class myOpenCV(QThread):
 
     def run(self):
         while True:
-            frame = self.screenCapture(self.getProgramPos(self.handle))
+            pass
+            #self.colorCompare()
+            #frame = self.screenCapture(self.getProgramPos(self.handle))
             #frame = self.screenCapture(self.getProgramCenterPos(self.handle))
-            cv2.imshow('frame', frame)
+            #cv2.imshow('frame', frame)
             #text = pytesseract.image_to_string(self.BgrToRgb(frame), config='--psm 6')
             #print(text)
-            key = cv2.waitKey(1)
+            #key = cv2.waitKey(1)
+
+    def searchColorImage(self, pos, img_src, img_template):
+        threshold = 0.8
+        image = cv2.cvtColor(img_src, cv2.COLOR_BGR2RGB)    #   RGB로 변환
+        template = cv2.imread(img_template, cv2.IMREAD_COLOR)
+        template_rgb = cv2.cvtColor(template, cv2.COLOR_BGR2RGB)    #   RGB로 변환
+
+        ##Split Both into each R, G, B Channel
+        imageMainR, imageMainG, imageMainB = cv2.split(image)
+        imageNeedleR, imageNeedleG, imageNeedleB = cv2.split(template_rgb)
+
+        ##Matching each channel
+        resultB = cv2.matchTemplate(imageMainR, imageNeedleR, cv2.TM_SQDIFF)
+        resultG = cv2.matchTemplate(imageMainG, imageNeedleG, cv2.TM_SQDIFF)
+        resultR = cv2.matchTemplate(imageMainB, imageNeedleB, cv2.TM_SQDIFF)
+
+        print(resultB, resultG, resultR)
+
+        ##Add together to get the total score
+        result = resultB + resultG + resultR
+        loc = np.where(result >= 3 * threshold)
+        for x in zip(*loc[::-1]):
+            return x
 
 
     def searchImage(self, pos, img_src, img_template):
