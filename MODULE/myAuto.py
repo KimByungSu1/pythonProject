@@ -271,7 +271,7 @@ class myAuto(QThread):
 
     def snackEat(self, idx): #   삼색채 먹기
         if self.gameInfo[idx].BattleCount > 5:  # 4번째 전투마다 삼색채 먹기
-            for repeat in range(0, 5):  # 5번반복
+            for repeat in range(0, 4):  # 4번반복
                 tx = self.CtrlAddCheckSum("$KEYBOARD,{0},0,{1},*".format(0x04, '222222'))  # 알트2
                 self.autoSendReport.emit(tx)  # 키보드 제어 프로토콜 전송
                 time.sleep(0.5)  # 초마다 한번씩
